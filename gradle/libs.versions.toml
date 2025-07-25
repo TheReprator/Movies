@@ -14,6 +14,7 @@ androidx-navigation = "2.9.0-beta04"
 androidx-testExt = "1.2.1"
 composeHotReload = "1.0.0-beta04"
 composeMultiplatform = "1.8.2"
+composeMedia = "1.8.0-rc02"
 junit = "4.13.2"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
@@ -42,12 +43,14 @@ androidx-compose-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-
 androidx-material3-windowSizeClass = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "composeMultiplatform" }
 androidx-material3-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive", version = "1.2.0-alpha04" }
 androidx-material3-window = { group = "org.jetbrains.androidx.window", name = "window-core", version = "1.4.0-alpha09" }
-
-compose-material3-windowsizeclass = "dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.5.0"
 compose-adaptive-accompanist = "com.google.accompanist:accompanist-adaptive:0.37.3"
 
-androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version = "1.0.0-alpha12" }
-androidx-tv-material = { group = "androidx.tv", name = "tv-material", version = "1.0.1" }
+
+compose-media-swing = { module = "uk.co.caprica:vlcj", version = "5.0.0-M4" }
+compose-media-exo = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "composeMedia" }
+compose-media-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "composeMedia" }
+compose-media-common = { group = "androidx.media3", name = "media3-common", version.ref = "composeMedia" }
+compose-media-session = { group = "androidx.media3", name = "media3-session", version.ref = "composeMedia" }
 
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name ="lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name ="lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }

@@ -35,6 +35,12 @@ reportCompose: manualClean
 	$(GRADLEW) assembleDebug -PenableComposeCompilerMetrics=true -PenableComposeCompilerReports=true
 	@echo "✅ Done!"
 
+# Apply spotless
+spotless: manualClean
+	@echo "Apply spotless"
+	$(GRADLEW) spotlessApply
+	@echo "✅ Done!"
+
 # Run Android build
 buildAndroid: cleanBuild
 	@echo "Android build"

@@ -1,4 +1,22 @@
+/*
+ * Copyright 2025 @TheReprator
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 @file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class)
+
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.ExperimentalComposeLibrary
@@ -28,7 +46,7 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             isStatic = true
@@ -59,7 +77,10 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.compose.adaptive.accompanist)
+            implementation(libs.compose.media.exo)
+            implementation(libs.compose.media.ui)
+            implementation(libs.compose.media.common)
+            implementation(libs.compose.media.session)
 
             implementation(libs.ktor.client.android)
 
@@ -111,6 +132,8 @@ kotlin {
         }
 
         desktopMain.dependencies {
+            implementation(libs.compose.media.swing)
+
             implementation(compose.desktop.currentOs)
             implementation(libs.ktor.client.java)
             implementation(libs.kotlinx.coroutines.swing)
@@ -130,7 +153,7 @@ composeCompiler {
     reportsDestination = layout.buildDirectory.dir("shared_compose_compiler")
     metricsDestination = layout.buildDirectory.dir("shared_compose_metric")
     stabilityConfigurationFiles.addAll(
-        project.layout.projectDirectory.file("compose-stability.conf")
+        project.layout.projectDirectory.file("compose-stability.conf"),
     )
 }
 
@@ -142,7 +165,10 @@ addKspDependencyForAllTargets(libs.kotlininject.compiler)
 
 android {
     namespace = "dev.reprator.movies.common"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 }
 
 ksp {
@@ -154,6 +180,7 @@ mokkery {
 }
 
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
+
 fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
 
 private fun Project.addKspDependencyForAllTargets(
@@ -167,8 +194,7 @@ private fun Project.addKspDependencyForAllTargets(
             .filter { target ->
                 // Don't add KSP for common target, only final platforms
                 target.platformType != KotlinPlatformType.common
-            }
-            .forEach { target ->
+            }.forEach { target ->
                 add(
                     "ksp${target.targetName.replaceFirstChar { it.uppercaseChar() }}$configurationNameSuffix",
                     dependencyNotation,

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 @TheReprator
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.reprator.movies.util
 
 import androidx.compose.runtime.Stable
@@ -16,14 +32,13 @@ import io.ktor.http.path
 import io.ktor.serialization.JsonConvertException
 import kotlinx.io.IOException
 
-suspend inline fun <reified T> HttpClient.safeRequest(
-    block: HttpRequestBuilder.() -> Unit,
-): AppResult<T> = try {
+suspend inline fun <reified T> HttpClient.safeRequest(block: HttpRequestBuilder.() -> Unit): AppResult<T> =
+    try {
         val response: HttpResponse = this.prepareRequest { block() }.execute()
         val responseData: T = response.body()
         AppSuccess(responseData)
     } catch (e: CustomHttpExceptions) {
-        AppError(message= e.message, throwable = e, errorCode = e.response.status.value)
+        AppError(message = e.message, throwable = e, errorCode = e.response.status.value)
     } catch (e: JsonConvertException) {
         AppError(message = "Failed to parse successful response: ${e.message}", throwable = e)
     } catch (e: HttpRequestTimeoutException) {
@@ -38,12 +53,11 @@ suspend inline fun <reified T> HttpClient.safeRequest(
         AppError(message = "An unexpected error occurred: ${e.message}", throwable = e)
     }
 
-
 suspend inline fun <reified T> HttpClient.hitApiWithClient(
     endPoint: String,
     methodName: HttpMethod = HttpMethod.Get,
     crossinline changeBlock: ParametersBuilder.() -> Unit = {},
-    crossinline block: HttpRequestBuilder.() -> Unit = {}
+    crossinline block: HttpRequestBuilder.() -> Unit = {},
 ) = safeRequest<T> {
     url {
         changeBlock(parameters)
