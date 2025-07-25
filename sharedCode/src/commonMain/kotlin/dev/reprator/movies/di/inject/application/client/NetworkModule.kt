@@ -79,8 +79,8 @@ interface NetworkModule {
                 accept(ContentType.Application.Json)
 
                 url {
-                    protocol = URLProtocol.HTTPS
-                    host = "api.github.com"
+                    protocol = URLProtocol.HTTP
+                    host = "103.145.232.246"
                 }
             }
 

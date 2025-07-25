@@ -89,7 +89,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.navigation.compose)
 
-            //implementation(libs.androidx.material3.windowSizeClass)
             implementation(compose.material3AdaptiveNavigationSuite)
             implementation(libs.androidx.material3.adaptive)
             implementation(libs.androidx.material3.window)
