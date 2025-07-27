@@ -16,6 +16,10 @@
 
 package dev.reprator.movies.root
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
@@ -35,7 +39,7 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.util.DebugLogger
 import dev.reprator.movies.root.navigation.AppNavigationActions
-import dev.reprator.movies.root.navigation.ReplyNavigationWrapper
+import dev.reprator.movies.root.navigation.MoviesNavigationWrapper
 import dev.reprator.movies.root.navigation.Route
 import dev.reprator.movies.util.wrapper.ApplicationInfo
 import io.github.aakira.napier.DebugAntilog
@@ -64,12 +68,13 @@ class DefaultMoviesContent(
     ) {
 
         Napier.base(DebugAntilog())
+
         setSingletonImageLoaderFactory { context ->
             newImageLoader(context, applicationInfo)
         }
 
         MaterialTheme {
-            ReplyApp(
+            MoviesApp(
                 routeFactories = appRouteFactory
             )
         }
@@ -77,7 +82,7 @@ class DefaultMoviesContent(
 }
 
 @Composable
-fun ReplyApp(routeFactories: Set<AppRouteFactory>) {
+fun MoviesApp(routeFactories: Set<AppRouteFactory>) {
     val navController = rememberNavController()
     val navigationActions = remember(navController) {
         AppNavigationActions(navController)
@@ -88,7 +93,7 @@ fun ReplyApp(routeFactories: Set<AppRouteFactory>) {
     val adaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
 
     Surface {
-        ReplyNavigationWrapper(
+        MoviesNavigationWrapper(
             adaptiveInfo= adaptiveInfo,
             currentDestination = currentDestination,
             navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -110,7 +115,9 @@ fun RootNavigation(
     NavHost(
         navController = navController,
         startDestination = Route.Home,
-        modifier = modifier,
+        modifier = modifier // The modifier passed from the scaffold
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         create(
             factories = routeFactories,

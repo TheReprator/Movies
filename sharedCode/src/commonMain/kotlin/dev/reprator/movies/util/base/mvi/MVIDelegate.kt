@@ -62,6 +62,12 @@ class MVIDelegate<S : UiState, A : UiAction, E : SideEffect> internal constructo
             _sideEffect.send(effect)
         }
     }
+
+    override fun closeScope() {
+        middlewares.forEach {
+            it.close()
+        }
+    }
 }
 
 fun <S : UiState, A : UiAction, E : SideEffect> mvi(

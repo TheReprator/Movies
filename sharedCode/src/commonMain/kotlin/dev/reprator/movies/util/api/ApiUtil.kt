@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package dev.reprator.movies.util
+package dev.reprator.movies.util.api
 
 import androidx.compose.runtime.Stable
+import dev.reprator.movies.util.AppError
+import dev.reprator.movies.util.AppResult
+import dev.reprator.movies.util.AppSuccess
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.ConnectTimeoutException

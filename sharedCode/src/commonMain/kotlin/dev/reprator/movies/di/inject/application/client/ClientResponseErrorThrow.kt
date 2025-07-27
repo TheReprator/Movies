@@ -16,7 +16,7 @@
 
 package dev.reprator.movies.di.inject.application.client
 
-import dev.reprator.movies.util.CustomHttpExceptions
+import dev.reprator.movies.util.api.CustomHttpExceptions
 import io.github.aakira.napier.Napier
 import io.ktor.client.*
 import io.ktor.client.plugins.*

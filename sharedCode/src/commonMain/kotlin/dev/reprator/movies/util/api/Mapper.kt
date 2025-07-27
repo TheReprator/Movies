@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package dev.reprator.movies.util
+package dev.reprator.movies.util.api
 
-const val BASE_URL = "103.134.58.242"
-private const val PICTURE_URL = "/Admin/main/images/%1s/poster/%2s"
-private const val PICTURE_URL_TV = "/Admin/main/TVseries/%1s/poster/%2s"
+import androidx.compose.runtime.Stable
 
-fun getImageFromServerMovies(
-    movieId: String,
-    imageName: String,
-): String = PICTURE_URL.format(movieId, imageName)
+@Stable
+interface Mapper<in InputModal, out OutputModal> {
+    suspend fun map(from: InputModal): OutputModal
+}
 
-fun getImageFromServerTv(
-    tvSeriesId: String,
-    imageName: String,
-): String = PICTURE_URL_TV.format(tvSeriesId, imageName)
+fun <F, T> Mapper<F, T>.toListMapper(predicate: (F) -> Boolean = { true }): suspend (List<F>?) -> List<T> =
+    { list ->
+        list
+            ?.filter { predicate(it) }
+            ?.map { item ->
+                map(item)
+            } ?: emptyList()
+    }

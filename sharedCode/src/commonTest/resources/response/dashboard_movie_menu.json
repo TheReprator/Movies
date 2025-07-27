@@ -1,0 +1,440 @@
+[
+  {
+    "id": "1",
+    "menu_name": "Bangla Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "2",
+    "menu_name": "Hindi Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "3",
+    "menu_name": "English Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "4",
+    "menu_name": "Tamil Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "5",
+    "menu_name": "South Indian Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "6",
+    "menu_name": "Indian Bangla Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "7",
+    "menu_name": "Documentaries",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "8",
+    "menu_name": "Animation Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "9",
+    "menu_name": "Japanese Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "10",
+    "menu_name": "Korean Movie",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "11",
+    "menu_name": "Malayalam",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "12",
+    "menu_name": "Russia",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "13",
+    "menu_name": "Franch",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "14",
+    "menu_name": "Thailand",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "15",
+    "menu_name": "Turkey",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "16",
+    "menu_name": "Hong-Kong",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "17",
+    "menu_name": "Spanish",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "18",
+    "menu_name": "Pakistani",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "19",
+    "menu_name": "Chinese",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "20",
+    "menu_name": "3D Movie",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "21",
+    "menu_name": "Italian",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "22",
+    "menu_name": "Foreign",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "23",
+    "menu_name": "Hindi Dubbed Movies",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "24",
+    "menu_name": "IMDB Top 250",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "25",
+    "menu_name": "Panjabi",
+    "parent": "movies",
+    "visible": "1"
+  },
+  {
+    "id": "40",
+    "menu_name": "Android Apps",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "41",
+    "menu_name": "Bangla Writing ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "42",
+    "menu_name": "web-designing",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "43",
+    "menu_name": "Anti Virus",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "44",
+    "menu_name": "Video Editing ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "45",
+    "menu_name": "Utility",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "46",
+    "menu_name": "Typing Software",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "47",
+    "menu_name": "Sound Editing ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "48",
+    "menu_name": "Programming",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "49",
+    "menu_name": "Operating System",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "50",
+    "menu_name": "Office Software ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "51",
+    "menu_name": "Multimedia ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "52",
+    "menu_name": "Mac Software",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "53",
+    "menu_name": "Internet",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "54",
+    "menu_name": "Graphics",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "55",
+    "menu_name": "Font Collection ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "56",
+    "menu_name": "CD\/DVD Burner ",
+    "parent": "software",
+    "visible": "1"
+  },
+  {
+    "id": "100",
+    "menu_name": "Pc Games",
+    "parent": "games",
+    "visible": "1"
+  },
+  {
+    "id": "101",
+    "menu_name": "Android Games",
+    "parent": "games",
+    "visible": "1"
+  },
+  {
+    "id": "102",
+    "menu_name": "Online Games ",
+    "parent": "games",
+    "visible": "1"
+  },
+  {
+    "id": "103",
+    "menu_name": "Kids Games",
+    "parent": "games",
+    "visible": "1"
+  },
+  {
+    "id": "120",
+    "menu_name": "Cartoon",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "121",
+    "menu_name": "Bangla Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "122",
+    "menu_name": "Hindi Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "123",
+    "menu_name": "English Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "124",
+    "menu_name": "Arabic Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "125",
+    "menu_name": "Sinhalese TV Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "126",
+    "menu_name": "Korean Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "127",
+    "menu_name": "720p BrRip",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "128",
+    "menu_name": "Turkish Tv Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "129",
+    "menu_name": "Asian TV Series",
+    "parent": "Tv Series",
+    "visible": "1"
+  },
+  {
+    "id": "202",
+    "menu_name": "CAM-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "203",
+    "menu_name": "HDCAM-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "204",
+    "menu_name": "HD-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "205",
+    "menu_name": "DVDSCR-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "206",
+    "menu_name": "DVD-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "207",
+    "menu_name": "HD 720p",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "208",
+    "menu_name": "HD 1080p",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "211",
+    "menu_name": "Bluray 1080p",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "212",
+    "menu_name": "1080p WEB-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "213",
+    "menu_name": "720p WEB-RIP",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "214",
+    "menu_name": "720 Web-DL\t",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "215",
+    "menu_name": "1080 WEB-DL",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "216",
+    "menu_name": "PreDVD",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "217",
+    "menu_name": "Bluray 720p",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "218",
+    "menu_name": "1080p BrRip",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "219",
+    "menu_name": "1080p Bluray",
+    "parent": "quality",
+    "visible": "1"
+  },
+  {
+    "id": "585",
+    "menu_name": "Korean Movies",
+    "parent": "movies",
+    "visible": "1"
+  }
+]

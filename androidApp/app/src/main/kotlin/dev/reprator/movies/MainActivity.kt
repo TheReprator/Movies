@@ -40,9 +40,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             component.movieContent.Content(
                 onOpenUrl = { url ->
-                    val intent = CustomTabsIntent.Builder().build()
-                    intent.launchUrl(this@MainActivity, url.toUri())
-                    true
+
+                    false
                 },
                 modifier =
                     Modifier.semantics {

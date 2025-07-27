@@ -41,6 +41,8 @@ interface MVI<S : UiState, A : UiAction, E : SideEffect> {
     fun updateUiState(newUiState: S)
 
     fun CoroutineScope.emitSideEffect(effect: E)
+
+    fun closeScope()
 }
 
 interface Reducer<S : UiState, A : UiAction, E : SideEffect> {
@@ -52,7 +54,7 @@ interface Reducer<S : UiState, A : UiAction, E : SideEffect> {
 
 typealias ActionDispatcher<A> = (A) -> Unit
 
-interface Middleware<S : UiState, A : UiAction, E : SideEffect> {
+interface Middleware<S : UiState, A : UiAction, E : SideEffect>: AutoCloseable {
     fun onAction(
         action: A,
         state: S,

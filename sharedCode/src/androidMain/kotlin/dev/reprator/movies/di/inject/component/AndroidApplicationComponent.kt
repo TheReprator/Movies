@@ -27,10 +27,9 @@ import me.tatarka.inject.annotations.Provides
 @Component
 @ApplicationScope
 abstract class AndroidApplicationComponent(
-    @get:Provides val activity: Activity,
     @get:Provides val application: Application,
 ) : SharedApplicationComponent {
-    abstract val networkListener: NetworkListener
+    //abstract val networkListener: NetworkListener
 
     companion object
 }

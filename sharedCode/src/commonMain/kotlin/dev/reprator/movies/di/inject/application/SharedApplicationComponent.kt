@@ -31,6 +31,7 @@ expect interface SharedPlatformApplicationComponent
 interface SharedApplicationComponent :
     SharedPlatformApplicationComponent,
     NetworkModule {
+
     val dispatchers: AppCoroutineDispatchers
     val httpClient: HttpClient
     val applicationInfo: ApplicationInfo

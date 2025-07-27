@@ -10,6 +10,12 @@ Accept-Encoding: gzip, deflate
 %}
 ###
 
+# Dashboard Movie page test 1
+GET {{base-url}}/api/v1/movies.php?sort_by=uploadTime DESC&limit=10&page=2
+Content-Type: application/json
+Accept-Encoding: gzip, deflate
+###
+
 
 # Dashboard Tv shows
 #@no-auto-encoding
@@ -86,3 +92,10 @@ Content-Type: application/json
 GET {{base-url}}/api/v1/search.php?search=squid+gam
 Content-Type: application/json
 ###
+
+
+
+#Random check
+http://103.145.232.246/api/v1/movies.php%3Fsort_by=uploadTime%20DESC&limit=10?page=1
+Content-Type: application/json
+Accept-Encoding: gzip, deflate

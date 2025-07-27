@@ -74,6 +74,7 @@ import androidx.navigation.NavDestination
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import movies.sharedcode.generated.resources.Res
 import movies.sharedcode.generated.resources.app_name
@@ -84,12 +85,19 @@ import org.jetbrains.compose.resources.stringResource
 private fun WindowSizeClass.isCompact() = windowWidthSizeClass == WindowWidthSizeClass.COMPACT ||
         windowHeightSizeClass == WindowHeightSizeClass.COMPACT
 
+//  Handle landscape scenarios for NavigationRail (phones/tablets in landscape)
+//    A common definition for landscape suitable for a NavRail is when width is Medium/Expanded
+//    AND height is Compact. Or, simply, if the width allows for a rail.
+private fun WindowSizeClass.isLandScape() = (windowWidthSizeClass == WindowWidthSizeClass.MEDIUM && windowHeightSizeClass == WindowHeightSizeClass.COMPACT) ||
+        (windowWidthSizeClass == WindowWidthSizeClass.EXPANDED && windowHeightSizeClass == WindowHeightSizeClass.COMPACT) ||
+        (windowWidthSizeClass == WindowWidthSizeClass.MEDIUM && windowHeightSizeClass == WindowHeightSizeClass.MEDIUM)
+
 class AppNavSuiteScope(val navSuiteType: NavigationSuiteType)
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ReplyNavigationWrapper(
+fun MoviesNavigationWrapper(
     currentDestination: NavDestination?,
     navigateToTopLevelDestination: (AppTopLevelDestination) -> Unit,
     adaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -100,10 +108,19 @@ fun ReplyNavigationWrapper(
     }
 
     val navLayoutType = when {
-        adaptiveInfo.windowPosture.isTabletop -> NavigationSuiteType.NavigationBar
-        adaptiveInfo.windowSizeClass.isCompact() -> NavigationSuiteType.NavigationBar
+        adaptiveInfo.windowPosture.isTabletop ->
+            NavigationSuiteType.NavigationBar
+
         adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED &&
-                windowSize.width >= 1200.dp -> NavigationSuiteType.NavigationDrawer
+                windowSize.width >= 1200.dp ->
+            NavigationSuiteType.NavigationDrawer
+
+        adaptiveInfo.windowSizeClass.isLandScape() ->
+            NavigationSuiteType.NavigationRail
+
+        adaptiveInfo.windowSizeClass.isCompact() ->  NavigationSuiteType.NavigationBar
+
+
         else -> NavigationSuiteType.NavigationRail
     }
 

@@ -18,6 +18,10 @@ package dev.reprator.movies.features.home.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import dev.reprator.movies.util.base.mvi.MVI
+import dev.reprator.movies.util.base.mvi.Middleware
+import dev.reprator.movies.util.base.mvi.Reducer
+import dev.reprator.movies.util.base.mvi.mvi
 import dev.reprator.movies.util.wrapper.AppCoroutineDispatchers
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
@@ -32,4 +36,16 @@ private const val MINIMUM_SEARCH_LENGTH = 3
 class HomeViewModel(
     @Assisted val savedStateHandle: SavedStateHandle,
     private val dispatchers: AppCoroutineDispatchers,
-) : ViewModel()
+    private val middleWareList: Set<Middleware<HomeState, HomeAction, HomeEffect>>,
+    private val reducer: Reducer<HomeState, HomeAction, HomeEffect>,
+) : ViewModel(), MVI<HomeState, HomeAction, HomeEffect> by mvi(
+    dispatchers,
+    reducer,
+    middleWareList,
+    HomeState.initial()
+) {
+    override fun onCleared() {
+        closeScope()
+        super.onCleared()
+    }
+}
