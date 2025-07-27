@@ -1,7 +1,9 @@
 package dev.reprator.movies.features.home.presentation
 
-import dev.reprator.movies.features.home.domain.models.CategoryItem
-import dev.reprator.movies.features.home.domain.models.HomeModel
+import dev.reprator.movies.features.home.domain.models.HomeCategoryType
+import dev.reprator.movies.features.home.domain.models.HomeSectionModel
+import dev.reprator.movies.features.home.domain.models.DisplayableItem
+import dev.reprator.movies.features.home.domain.models.HomeSectionLayoutType
 import dev.reprator.movies.features.home.domain.models.MovieGenreItem
 import dev.reprator.movies.util.base.mvi.SideEffect
 import dev.reprator.movies.util.base.mvi.UiAction
@@ -9,31 +11,29 @@ import dev.reprator.movies.util.base.mvi.UiState
 
 
 sealed interface HomeAction : UiAction {
-    object UpdateHomeList : HomeAction
-
-    data class UpdateHomeTvList(val itemList: List<CategoryItem>) : HomeAction
-    data class UpdateHomeTvError(val error: String) : HomeAction
-    object RetryTv : HomeAction
-
-    data class UpdateHomeMovieList(val itemList: List<CategoryItem>) : HomeAction
-    data class UpdateHomeMovieError(val error: String) : HomeAction
-    object RetryMovie : HomeAction
-
-    data class UpdateHomeGenreList(val itemList: List<MovieGenreItem>) : HomeAction
-    object RetryMovieGenre : HomeAction
+    object LoadHomeData : HomeAction
+    data class SectionLoaded(
+        val sectionType: HomeCategoryType,
+        val items: List<DisplayableItem> = emptyList(),
+        val genres: List<MovieGenreItem> = emptyList()
+    ) : HomeAction
+    data class SectionLoadError(val sectionType: HomeCategoryType, val error: String) : HomeAction
+    data class RetrySection(val sectionType: HomeCategoryType) : HomeAction
+    data class CarouselPagination(val sectionType: HomeCategoryType) : HomeAction
 }
+
 
 sealed interface HomeEffect : SideEffect {
     data class ShowError(val message: String) : HomeEffect
 }
 
 data class HomeState(
-    val itemList: List<HomeModel>
+    val sections: List<HomeSectionModel>
 ) : UiState {
     companion object {
         fun initial(): HomeState {
             return HomeState(
-                itemList = emptyList()
+                sections = emptyList()
             )
         }
     }

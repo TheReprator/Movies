@@ -1,7 +1,6 @@
 package dev.reprator.movies.features.home.domain.models
 
-interface CategoryItem: ItemType {
-    val id: String
+interface CategoryDisplayableItem: DisplayableItem {
     val typeId: String
     val name: String
     val description: String
@@ -15,19 +14,23 @@ interface CategoryItem: ItemType {
 }
 
 
-interface ItemType {
+interface DisplayableItem {
     val itemType: ResultStatus
+    val id: String
 }
 
 
-class ItemTypeLoader: ItemType {
+class DisplayableItemLoader: DisplayableItem {
     override val itemType: ResultStatus = ResultStatus.RESULT_STATUS_LOADER
+    override val id: String = "DisplayableItemLoader"
 }
 
-class ItemTypeEmpty: ItemType {
+class DisplayableItemEmpty: DisplayableItem {
     override val itemType: ResultStatus = ResultStatus.RESULT_STATUS_EMPTY
+    override val id: String = "DisplayableItemEmpty"
 }
 
-class ItemTypeError: ItemType {
+data class DisplayableItemError(val message: String = "Failed to load item"): DisplayableItem {
     override val itemType: ResultStatus = ResultStatus.RESULT_STATUS_ERROR
+    override val id: String = "DisplayableItemError"
 }

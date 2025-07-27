@@ -1,6 +1,6 @@
 package dev.reprator.movies.features.home.data.repository.remote
 
-import dev.reprator.movies.features.home.data.repository.remote.MovieRemoteImplRepository.Companion.QUERY_AP
+import dev.reprator.movies.features.home.data.repository.remote.MovieRemoteImplRepository.Companion.QUERY_MAP
 import dev.reprator.movies.features.home.data.repository.remote.MovieRemoteImplRepository.Companion.QUERY_PAGE
 import dev.reprator.movies.features.home.data.repository.remote.model.tv.ResponseModelTv
 import dev.reprator.movies.features.home.data.serials.TvDataRepository
@@ -24,7 +24,7 @@ class TvRemoteImplRepository(
         val response = httpClient.value.hitApiWithClient<List<ResponseModelTv>>(
             endPoint = TV_API,
             changeBlock = {
-                appendAll(QUERY_AP)
+                appendAll(QUERY_MAP)
                 append(QUERY_PAGE, pageCount.toString())
             }) {
         }

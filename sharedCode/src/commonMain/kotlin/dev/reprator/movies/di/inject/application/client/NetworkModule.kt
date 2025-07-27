@@ -52,6 +52,7 @@ interface NetworkModule {
             useAlternativeNames = true
             ignoreUnknownKeys = true
             encodeDefaults = false
+            explicitNulls = false
         }
     }
 
@@ -96,7 +97,7 @@ interface NetworkModule {
 
                 url {
                     protocol = URLProtocol.HTTP
-                    host = "103.145.232.246"
+                    host = "103.134.58.242"
                 }
             }
 

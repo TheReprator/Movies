@@ -1,6 +1,6 @@
 package dev.reprator.movies.features.home.domain.models
 
-data class HomeMovieItem(
+data class HomeMovieDisplayableItem(
     override val id: String,
     override val typeId: String,
     override val name: String,
@@ -14,7 +14,7 @@ data class HomeMovieItem(
     val movieSize: String,
     val movieRuntime: String,
     val castAndCrew: String,
-): CategoryItem
+): CategoryDisplayableItem
 
 
 data class HomeEpisodeOverView(
@@ -27,7 +27,7 @@ data class HomeEpisodeOverView(
     override val language: String,
     override val categoriesList: List<String>,
     override val categoryType: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_TV,
-): CategoryItem
+): CategoryDisplayableItem
 
 
 data class MovieGenreItem(val id: String, val name: String)

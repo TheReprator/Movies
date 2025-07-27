@@ -13,20 +13,45 @@ enum class HomeCategoryType {
     HOME_CATEGORY_GENRE
 }
 
-sealed interface HomeModel {
-    val id: HomeCategoryType
-    val resultStatus: ResultStatus
+enum class HomeSectionLayoutType {
+    POSTER_CAROUSEL,
+    GENRE_CHIPS
+}
 
-    data class ModelGenre(val genreList: List<MovieGenreItem>,
-                     override val id: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_GENRE,
-                     override val resultStatus: ResultStatus = ResultStatus.RESULT_STATUS_LOADER
-    ): HomeModel
+sealed interface HomeSectionModel {
+    val sectionId: HomeCategoryType
+    val status: ResultStatus
+    val layoutType: HomeSectionLayoutType
 
-    data class ModelMovie(val categoryName: String, val itemList: List<ItemType>,
-                     override val id: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_MOVIE,
-                     override val resultStatus: ResultStatus = ResultStatus.RESULT_STATUS_LOADER): HomeModel
+    data class ItemCarouselSection(
+        val categoryName: String,
+        val items: List<DisplayableItem>,
+        override val sectionId: HomeCategoryType,
+        override val status: ResultStatus = ResultStatus.RESULT_STATUS_LOADER,
+        override val layoutType: HomeSectionLayoutType = HomeSectionLayoutType.POSTER_CAROUSEL
+    ) : HomeSectionModel
 
-    data class ModelTvSeries(val categoryName: String, val itemList: List<ItemType>,
-                        override val id: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_TV,
-                        override val resultStatus: ResultStatus = ResultStatus.RESULT_STATUS_LOADER): HomeModel
+    data class GenreChipsSection(
+        val genres: List<MovieGenreItem>,
+        override val sectionId: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_GENRE,
+        override val status: ResultStatus = ResultStatus.RESULT_STATUS_LOADER,
+        override val layoutType: HomeSectionLayoutType = HomeSectionLayoutType.GENRE_CHIPS
+    ) : HomeSectionModel
+
+   /* data class SectionModelGenre(val genreList: List<MovieGenreItem>,
+                                 override val sectionId: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_GENRE,
+                                 override val status: ResultStatus = ResultStatus.RESULT_STATUS_LOADER,
+                                 override val layoutType: HomeSectionLayoutType = HomeSectionLayoutType.GENRE_CHIPS
+    ): HomeSectionModel
+
+    data class SectionModelMovie(val categoryName: String, val itemList: List<ItemType>,
+                                 override val sectionId: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_MOVIE,
+                                 override val status: ResultStatus = ResultStatus.RESULT_STATUS_LOADER,
+                                 override val layoutType: HomeSectionLayoutType = HomeSectionLayoutType.POSTER_CAROUSEL
+        ): HomeSectionModel
+
+    data class SectionModelTvSeries(val categoryName: String, val itemList: List<ItemType>,
+                                    override val sectionId: HomeCategoryType = HomeCategoryType.HOME_CATEGORY_TV,
+                                    override val status: ResultStatus = ResultStatus.RESULT_STATUS_LOADER,
+                                    override val layoutType: HomeSectionLayoutType = HomeSectionLayoutType.POSTER_CAROUSEL): HomeSectionModel*/
 }

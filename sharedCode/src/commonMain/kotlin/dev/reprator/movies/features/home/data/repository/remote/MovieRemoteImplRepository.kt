@@ -6,7 +6,7 @@ import dev.reprator.movies.features.home.data.repository.remote.model.movie.Movi
 import dev.reprator.movies.features.home.data.repository.remote.model.movie.ResponseModelMovie
 import dev.reprator.movies.features.home.data.repository.remote.model.movie.ResponseModelMovieGenre
 import dev.reprator.movies.features.home.domain.models.MovieGenreItem
-import dev.reprator.movies.features.home.domain.models.HomeMovieItem
+import dev.reprator.movies.features.home.domain.models.HomeMovieDisplayableItem
 import dev.reprator.movies.util.AppError
 import dev.reprator.movies.util.AppResult
 import dev.reprator.movies.util.AppSuccess
@@ -21,11 +21,11 @@ class MovieRemoteImplRepository(
     private val httpClient: Lazy<HttpClient>, private val mapper: MovieMapper
 ) : MovieDataRepository {
 
-    override suspend fun getMovieList(pageCount: Int): AppResult<List<HomeMovieItem>> {
+    override suspend fun getMovieList(pageCount: Int): AppResult<List<HomeMovieDisplayableItem>> {
         val response = httpClient.value.hitApiWithClient<List<ResponseModelMovie>>(
             endPoint = MOVIE_API,
             changeBlock = {
-                appendAll(QUERY_AP)
+                appendAll(QUERY_MAP)
                 append(QUERY_PAGE, pageCount.toString())
             })
 
@@ -60,6 +60,6 @@ class MovieRemoteImplRepository(
         private const val MOVIE_API = "/api/v1/movies.php"
         private const val MOVIE_GENRE = "/api/v1/moviegenre.php"
         const val QUERY_PAGE = "page"
-        val QUERY_AP = mapOf("sort_by" to "uploadTime DESC", "limit" to "10")
+        val QUERY_MAP = mapOf("sort_by" to "uploadTime DESC", "limit" to "10")
     }
 }

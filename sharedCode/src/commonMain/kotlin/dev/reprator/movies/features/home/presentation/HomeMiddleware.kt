@@ -1,7 +1,8 @@
 package dev.reprator.movies.features.home.presentation
 
+import dev.reprator.movies.features.home.domain.models.HomeCategoryType
 import dev.reprator.movies.features.home.domain.models.HomeEpisodeOverView
-import dev.reprator.movies.features.home.domain.models.HomeMovieItem
+import dev.reprator.movies.features.home.domain.models.HomeMovieDisplayableItem
 import dev.reprator.movies.features.home.domain.models.MovieGenreItem
 import dev.reprator.movies.features.home.domain.usecase.MovieUseCase
 import dev.reprator.movies.features.home.domain.usecase.TvUseCase
@@ -28,6 +29,11 @@ class HomeMiddleware(
     private val dispatchers: AppCoroutineDispatchers
 ) : Middleware<HomeState, HomeAction, HomeEffect>, CoroutineScope {
 
+    // Keep track of current page for each paginated section
+    private val sectionCurrentPage = mutableMapOf<HomeCategoryType, Int>()
+    // Keep track of whether more items are available for each section
+    private val sectionHasMore = mutableMapOf<HomeCategoryType, Boolean>()
+
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Napier.e(throwable) { "Coroutine exception" }
     }
@@ -36,9 +42,6 @@ class HomeMiddleware(
         SupervisorJob() + Dispatchers.Main.immediate + coroutineExceptionHandler
 
     private val mviDispatcher = CompletableDeferred<(HomeAction) -> Unit>()
-
-    private var moviePaginationCount = 1
-    private var tvPaginationCount = 1
 
     override fun close() {
         coroutineContext.cancelChildren()
@@ -54,20 +57,20 @@ class HomeMiddleware(
     ) {
         when (action) {
 
-            is HomeAction.UpdateHomeList -> {
+            is HomeAction.LoadHomeData -> {
+                sectionCurrentPage.clear()
+                sectionHasMore.clear()
+                sectionCurrentPage.put(HomeCategoryType.HOME_CATEGORY_MOVIE, 1)
+                sectionCurrentPage.put(HomeCategoryType.HOME_CATEGORY_TV, 1)
                 handleApi()
             }
 
-            is HomeAction.RetryTv -> {
-                fetchTvEpisodes()
+            is HomeAction.RetrySection -> {
+                fetchSection(action.sectionType)
             }
 
-            is HomeAction.RetryMovie -> {
-                fetchMovies()
-            }
-
-            is HomeAction.RetryMovieGenre -> {
-                fetchMovieGenre()
+            is HomeAction.CarouselPagination -> {
+                fetchSection(action.sectionType)
             }
 
             else -> {
@@ -77,24 +80,46 @@ class HomeMiddleware(
     }
 
     private fun handleApi() {
-       /* fetchMovies()
+        fetchMovies()
         fetchMovieGenre()
-        fetchTvEpisodes()*/
+        fetchTvEpisodes()
     }
 
     private fun fetchTvEpisodes() {
+
         launch(dispatchers.io) {
-            val result = tvUseCase.getTvList(tvPaginationCount)
+            val sectionValue = sectionHasMore.getOrElse(HomeCategoryType.HOME_CATEGORY_TV) { true }
+            if(!sectionValue) {
+                mviDispatcher.await()(
+                    HomeAction.SectionLoaded(
+                        HomeCategoryType.HOME_CATEGORY_TV
+                    )
+                )
+                return@launch
+            }
+
+            val currentTvPage = sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_TV]!!
+            val result = tvUseCase.getTvList(currentTvPage)
             withContext(dispatchers.main) {
                 when (result) {
                     is AppSuccess<List<HomeEpisodeOverView>> -> {
-                        tvPaginationCount++
-                        mviDispatcher.await()(HomeAction.UpdateHomeTvList(result.data))
+                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_TV] = currentTvPage+1
+                        if(result.data.isEmpty()) {
+                            sectionHasMore[HomeCategoryType.HOME_CATEGORY_TV] = false
+                        }
+
+                        mviDispatcher.await() (
+                            HomeAction.SectionLoaded(
+                                sectionType = HomeCategoryType.HOME_CATEGORY_TV,
+                                items = result.data
+                            )
+                        )
                     }
 
                     is AppError -> {
                         mviDispatcher.await()(
-                            HomeAction.UpdateHomeTvError(
+                            HomeAction.SectionLoadError(
+                                HomeCategoryType.HOME_CATEGORY_TV,
                                 result.message ?: result.throwable?.message ?: ""
                             )
                         )
@@ -106,17 +131,37 @@ class HomeMiddleware(
 
     private fun fetchMovies() {
         launch(dispatchers.io) {
-            val result = moveUseCase.getMovieList(moviePaginationCount)
+            val sectionValue = sectionHasMore.getOrElse(HomeCategoryType.HOME_CATEGORY_MOVIE) { true }
+            if(!sectionValue) {
+                mviDispatcher.await()(
+                    HomeAction.SectionLoaded(
+                        HomeCategoryType.HOME_CATEGORY_MOVIE
+                    )
+                )
+                return@launch
+            }
+
+            val currentMoviePage = sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_MOVIE]!!
+            val result = moveUseCase.getMovieList(currentMoviePage)
             withContext(dispatchers.main) {
                 when (result) {
-                    is AppSuccess<List<HomeMovieItem>> -> {
-                        moviePaginationCount++
-                        mviDispatcher.await()(HomeAction.UpdateHomeMovieList(result.data))
+                    is AppSuccess<List<HomeMovieDisplayableItem>> -> {
+                        if(result.data.isEmpty()) {
+                            sectionHasMore[HomeCategoryType.HOME_CATEGORY_MOVIE] = false
+                        }
+                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_MOVIE] = currentMoviePage+1
+                        mviDispatcher.await()(
+                            HomeAction.SectionLoaded(
+                                sectionType = HomeCategoryType.HOME_CATEGORY_MOVIE,
+                                items = result.data
+                            )
+                        )
                     }
 
                     is AppError -> {
                         mviDispatcher.await()(
-                            HomeAction.UpdateHomeMovieError(
+                            HomeAction.SectionLoadError(
+                                HomeCategoryType.HOME_CATEGORY_MOVIE,
                                 result.message ?: result.throwable?.message ?: ""
                             )
                         )
@@ -132,12 +177,19 @@ class HomeMiddleware(
             withContext(dispatchers.main) {
                 when (result) {
                     is AppSuccess<List<MovieGenreItem>> -> {
-                        mviDispatcher.await()(HomeAction.UpdateHomeGenreList(result.data))
+
+                        mviDispatcher.await()(
+                            HomeAction.SectionLoaded(
+                                sectionType = HomeCategoryType.HOME_CATEGORY_GENRE,
+                                genres = result.data
+                            )
+                        )
                     }
 
                     is AppError -> {
                         mviDispatcher.await()(
-                            HomeAction.UpdateHomeMovieError(
+                            HomeAction.SectionLoadError(
+                                HomeCategoryType.HOME_CATEGORY_GENRE,
                                 result.message ?: result.throwable?.message ?: ""
                             )
                         )
@@ -145,5 +197,23 @@ class HomeMiddleware(
                 }
             }
         }
+    }
+
+    private fun fetchSection(sectionType: HomeCategoryType) {
+
+        when (sectionType) {
+            HomeCategoryType.HOME_CATEGORY_MOVIE -> {
+                fetchMovies()
+            }
+
+            HomeCategoryType.HOME_CATEGORY_TV -> {
+                fetchTvEpisodes()
+            }
+
+            HomeCategoryType.HOME_CATEGORY_GENRE -> {
+                fetchMovieGenre()
+            }
+        }
+
     }
 }

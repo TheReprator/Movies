@@ -1,15 +1,15 @@
 package dev.reprator.movies.features.home.data.repository.remote.model.movie
 
 import dev.reprator.movies.features.home.domain.models.MovieGenreItem
-import dev.reprator.movies.features.home.domain.models.HomeMovieItem
+import dev.reprator.movies.features.home.domain.models.HomeMovieDisplayableItem
 import dev.reprator.movies.util.api.Mapper
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class MovieMapper : Mapper<ResponseModelMovie, HomeMovieItem> {
+class MovieMapper : Mapper<ResponseModelMovie, HomeMovieDisplayableItem> {
 
-    override suspend fun map(from: ResponseModelMovie): HomeMovieItem {
-        return HomeMovieItem(
+    override suspend fun map(from: ResponseModelMovie): HomeMovieDisplayableItem {
+        return HomeMovieDisplayableItem(
             id = from.id.orEmpty(),
             typeId = from.movieID.orEmpty(),
             name = "${from.movieTitle.orEmpty()} (${from.movieYear.orEmpty()})",

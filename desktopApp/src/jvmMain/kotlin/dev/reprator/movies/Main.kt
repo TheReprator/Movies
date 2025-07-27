@@ -45,9 +45,9 @@ fun main() =
             onCloseRequest = ::exitApplication,
             title = "Movies",
         ) {
-            if (winState.size.width < 350.dp) {
+           /* if (winState.size.width < 350.dp) {
                 winState.size = DpSize(400.dp, winState.size.height)
-            }
+            }*/
 
             val component =
                 remember(applicationComponent) {

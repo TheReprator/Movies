@@ -11,9 +11,8 @@ Accept-Encoding: gzip, deflate
 ###
 
 # Dashboard Movie page test 1
-GET {{base-url}}/api/v1/movies.php?sort_by=uploadTime DESC&limit=10&page=2
+GET {{base-url}}/api/v1/movies.php?sort_by=uploadTime DESC&limit=10&page=1
 Content-Type: application/json
-Accept-Encoding: gzip, deflate
 ###
 
 

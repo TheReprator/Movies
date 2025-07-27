@@ -16,48 +16,54 @@
 
 package dev.reprator.movies.features.home.presentation.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.requiredSizeIn
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
-import dev.reprator.movies.features.home.domain.models.CategoryItem
-import dev.reprator.movies.features.home.domain.models.HomeModel
-import dev.reprator.movies.features.home.domain.models.MovieGenreItem
+import dev.reprator.movies.features.home.domain.models.CategoryDisplayableItem
+import dev.reprator.movies.features.home.domain.models.HomeCategoryType
+import dev.reprator.movies.features.home.domain.models.HomeSectionModel
+import dev.reprator.movies.features.home.domain.models.DisplayableItem
 import dev.reprator.movies.features.home.domain.models.ResultStatus
 import dev.reprator.movies.features.home.presentation.HomeAction
 import dev.reprator.movies.features.home.presentation.HomeState
 import dev.reprator.movies.features.home.presentation.HomeViewModel
-import dev.reprator.movies.util.widgets.WidgetEmpty
-import dev.reprator.movies.util.widgets.WidgetLoader
-import dev.reprator.movies.util.widgets.WidgetRetry
 import io.github.aakira.napier.Napier
 import me.tatarka.inject.annotations.Inject
 
 
 private typealias OnAction = (HomeAction) -> Unit
+
 
 @Inject
 @Composable
@@ -68,221 +74,236 @@ fun HomeScreen(
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(homeViewModel) {
-        homeViewModel.onAction(HomeAction.UpdateHomeList)
+    LaunchedEffect(Unit) {
+        homeViewModel.onAction(HomeAction.LoadHomeData)
     }
 
-    Napier.e { "HomeScreen ${uiState.itemList}" }
-    HomeScreen(uiState, {
-        homeViewModel.onAction(it)
+    Napier.e { "HomeScreen ${uiState.sections}" }
+    HomeScreen(uiState, { action ->
+        homeViewModel.onAction(action)
     }, modifier)
 }
 
 @Composable
 fun HomeScreen(
-    state: HomeState,
-    action: OnAction,
+    homeState: HomeState,
+    onAction: OnAction,
     modifier: Modifier = Modifier
 ) {
-    val lazyListState = rememberLazyListState()
+    val mainLazyListState = rememberLazyListState()
 
-    Napier.e { "HomeScreen1 ${state.itemList}" }
-    LazyColumn(state = lazyListState, modifier = modifier) {
-        items(state.itemList, key = { it.id }, contentType = { it.resultStatus }) { item ->
-            when (item) {
-                is HomeModel.ModelGenre -> {
-                    GenreItemContainer(state = item)
-                }
-
-                is HomeModel.ModelTvSeries -> {
-                    this@LazyColumn.SerialItemContainer(state = item, action = action)
-                }
-
-                is HomeModel.ModelMovie -> {
-                    this@LazyColumn.MovieItemContainer(state = item, action)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun GenreItemContainer(
-    state: HomeModel.ModelGenre,
-    modifier: Modifier = Modifier,
-    lazyState: LazyListState = rememberLazyListState()
-) {
-    if (state.resultStatus != ResultStatus.RESULT_STATUS_RESULT) {
-        return
-    }
-
-    LazyRow(state = lazyState, modifier = Modifier) {
-        items(state.genreList, key = { it.id }) { item ->
-            GenreItem(item = item) {
-
-            }
-        }
-    }
-}
-
-@Composable
-fun GenreItem(
-    modifier: Modifier = Modifier,
-    item: MovieGenreItem,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier.height(36.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
+    LazyColumn(
+        state = mainLazyListState,
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(item.name, fontSize = 14.sp)
+        items(
+            items = homeState.sections,
+            key = { homeModel -> homeModel.sectionId },
+            contentType = { homeModel -> homeModel.layoutType }
+        ) { homeModelSection ->
+            when (homeModelSection) {
+                is HomeSectionModel.GenreChipsSection -> {
+                }
+                is HomeSectionModel.ItemCarouselSection -> {
+                    SectionContainer(
+                        sectionTitle = homeModelSection.categoryName,
+                        sectionResultStatus = homeModelSection.status,
+                        items = homeModelSection.items,
+                        onSectionRetry = { onAction(HomeAction.RetrySection(homeModelSection.sectionId)) }
+                    )
+                }
+            }
+
+            if (homeState.sections.lastOrNull() != homeModelSection) {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp))
+            }
+        }
     }
 }
 
 @Composable
-fun HomeDivider() {
-    HorizontalDivider(thickness = 12.dp)
-}
-
-@Composable
-fun LazyListScope.MovieItemContainer(
-    state: HomeModel.ModelMovie,
-    action: OnAction,
-    modifier: Modifier = Modifier,
-    lazyState: LazyListState = rememberLazyListState()
+fun SectionContainer(
+    sectionTitle: String,
+    sectionResultStatus: ResultStatus,
+    items: List<DisplayableItem>,
+    onSectionRetry: () -> Unit,
 ) {
-    Napier.e { "HomeScreen MovieItemContainer ${state.itemList}" }
-    item {
-        Text(text = state.categoryName)
-        HomeDivider()
-    }
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text(
+            text = sectionTitle,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
 
-    when (state.resultStatus) {
-        ResultStatus.RESULT_STATUS_LOADER -> {
-            item {
-                WidgetLoader()
+        when (sectionResultStatus) {
+            ResultStatus.RESULT_STATUS_LOADER -> {
+                WidgetSectionLoader()
             }
-        }
-
-        ResultStatus.RESULT_STATUS_ERROR -> {
-            item {
-                WidgetRetry(onRetry = {
-                    action(HomeAction.RetryMovie)
-                })
+            ResultStatus.RESULT_STATUS_EMPTY -> {
+                WidgetSectionEmpty("No items found in this section.")
             }
-        }
-
-        ResultStatus.RESULT_STATUS_EMPTY -> {
-            item {
-                WidgetEmpty("No Data Found")
+            ResultStatus.RESULT_STATUS_ERROR -> {
+                WidgetSectionError("Failed to load this section.", onSectionRetry)
             }
-        }
-
-        ResultStatus.RESULT_STATUS_RESULT -> {
-            item {
-                HomPosterContainer(
-                    state.itemList as List<CategoryItem>, callRetry = {},
-                    lazyState = lazyState
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun HomPosterContainer(
-    itemList: List<CategoryItem>,
-    modifier: Modifier = Modifier,
-    callRetry: () -> Unit,
-    lazyState: LazyListState = rememberLazyListState()
-) {
-    LazyRow(state = lazyState, modifier = Modifier) {
-        items(itemList, key = {
-            it.id
-        }, contentType = {
-            it.itemType
-        }) { data ->
-            when (data.itemType) {
-                ResultStatus.RESULT_STATUS_LOADER -> {
-                    Box(modifier = Modifier.wrapContentWidth()) {
-                        WidgetLoader()
+            ResultStatus.RESULT_STATUS_RESULT -> {
+                val horizontalLazyListState = rememberLazyListState()
+                LazyRow(
+                    state = horizontalLazyListState,
+                    contentPadding = PaddingValues(horizontal = 12.dp), // Start padding before first item
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(
+                        items = items,
+                        key = { it.id },
+                        contentType = { item -> item.itemType } // Use the item's own ResultStatus
+                    ) { itemData -> // itemData is an ItemType
+                        RenderItemType(
+                            item = itemData,
+                            onRetry = {
+                            }
+                        )
                     }
                 }
-
-                ResultStatus.RESULT_STATUS_ERROR -> {
-                    Box(modifier = Modifier.wrapContentWidth()) {
-                        WidgetRetry(onRetry = callRetry)
-                    }
-                }
-
-                ResultStatus.RESULT_STATUS_EMPTY -> {
-
-                }
-
-                ResultStatus.RESULT_STATUS_RESULT -> {
-                    HomPosterListItem(data)
-                }
             }
         }
     }
 }
 
 @Composable
-fun HomPosterListItem(
-    itemList: CategoryItem,
-    modifier: Modifier = Modifier
-) {
-    Card(modifier = Modifier.requiredSizeIn(120.dp, 160.dp)) {
-        Box {
-            AsyncImage(
-                model = itemList.posterImage, contentDescription = itemList.name,
-                modifier = Modifier.fillMaxSize()
-            )
-            Text(text = itemList.name, Modifier.align(Alignment.BottomStart))
-            Text(text = itemList.ratings, Modifier.align(Alignment.BottomEnd))
-        }
-    }
-}
-
-
-@Composable
-fun LazyListScope.SerialItemContainer(
-    state: HomeModel.ModelTvSeries,
-    modifier: Modifier = Modifier,
-    action: OnAction,
-    lazyState: LazyListState = rememberLazyListState()
-) {
-
-    when (state.resultStatus) {
+fun RenderItemType(item: DisplayableItem, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+    when (item.itemType) {
         ResultStatus.RESULT_STATUS_LOADER -> {
-            item {
-                WidgetLoader()
-            }
+            WidgetItemLoader(modifier)
         }
-
-        ResultStatus.RESULT_STATUS_ERROR -> {
-            item {
-                WidgetRetry(onRetry = {
-                    action(HomeAction.RetryTv)
-                })
-            }
-        }
-
         ResultStatus.RESULT_STATUS_EMPTY -> {
-            item {
-                WidgetEmpty("No Data Found")
-            }
+            WidgetItemEmpty(modifier)
         }
-
+        ResultStatus.RESULT_STATUS_ERROR -> {
+            WidgetItemError(onRetry = onRetry, modifier = modifier)
+        }
         ResultStatus.RESULT_STATUS_RESULT -> {
-            item {
-                HomPosterContainer(
-                    state.itemList as List<CategoryItem>, callRetry = {},
-                    lazyState = lazyState
-                )
+            if (item is CategoryDisplayableItem) {
+                ActualContentItemCard(item = item, modifier = modifier)
+            } else {
+                Box(modifier.padding(8.dp)) { Text("Result (Unknown Type)", fontSize = 10.sp) }
             }
         }
     }
 }
+
+
+@Composable
+fun WidgetSectionLoader(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(200.dp) // Example height
+            .background(Color.LightGray.copy(alpha = 0.3f)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+        Text("Loading Section...", modifier = Modifier.padding(top = 60.dp))
+    }
+}
+
+@Composable
+fun WidgetSectionEmpty(message: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(200.dp), // Example height
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Section Empty: $message")
+    }
+}
+
+@Composable
+fun WidgetSectionError(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(200.dp), // Example height
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Section Error: $message")
+            Button(onClick = onRetry) {
+                Text("Retry")
+            }
+        }
+    }
+}
+
+@Composable
+fun WidgetItemLoader(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .width(120.dp) // Example width for a poster
+            .height(180.dp) // Example height for a poster
+            .background(Color.Gray.copy(alpha = 0.5f))
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(30.dp))
+    }
+}
+
+@Composable
+fun WidgetItemEmpty(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .width(120.dp)
+            .height(180.dp)
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("N/A", fontSize = 10.sp)
+    }
+}
+
+@Composable
+fun WidgetItemError(onRetry: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .width(120.dp)
+            .height(180.dp)
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(onClick = onRetry, modifier = Modifier.scale(0.8f)) {
+            Text("Retry", fontSize = 10.sp)
+        }
+    }
+}
+
+@Composable
+fun ActualContentItemCard(item: CategoryDisplayableItem, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .width(120.dp)
+            .height(180.dp)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+                    .background(Color.DarkGray)
+            ) {
+                Text(item.posterImage, color = Color.White, modifier = Modifier.align(Alignment.Center), fontSize = 10.sp)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(item.name, style = MaterialTheme.typography.titleSmall, maxLines = 2)
+            Text(item.ratings, style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
