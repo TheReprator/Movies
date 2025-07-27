@@ -25,7 +25,6 @@ import dev.reprator.movies.di.inject.component.AndroidApplicationComponent
 import dev.reprator.movies.di.inject.component.create
 
 class MoviesApp : Application() {
-
     val component: AndroidApplicationComponent by lazy {
         AndroidApplicationComponent.create(this)
     }
@@ -37,13 +36,15 @@ class MoviesApp : Application() {
 
     private fun setupStrictMode() {
         StrictMode.setThreadPolicy(
-            ThreadPolicy.Builder()
+            ThreadPolicy
+                .Builder()
                 .detectAll()
                 .penaltyLog()
                 .build(),
         )
         StrictMode.setVmPolicy(
-            VmPolicy.Builder()
+            VmPolicy
+                .Builder()
                 .detectLeakedSqlLiteObjects()
                 .detectActivityLeaks()
                 .detectLeakedClosableObjects()
@@ -61,8 +62,7 @@ class MoviesApp : Application() {
                         detectIncorrectContextUse()
                         detectUnsafeIntentLaunch()
                     }
-                }
-                .penaltyLog()
+                }.penaltyLog()
                 .build(),
         )
     }

@@ -1,4 +1,0 @@
-<resources>
-    <string name="api_poster_movies">/Admin/main/images/%1s/poster/%2s</string>
-    <string name="api_poster_serials">/Admin/main/TVseries/%1s/poster/%2s</string>
-</resources>

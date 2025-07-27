@@ -34,6 +34,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.mokkery)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -202,4 +203,14 @@ private fun Project.addKspDependencyForAllTargets(
                 )
             }
     }
+}
+
+buildConfig {
+    packageName = "dev.reprator.movies"
+    useKotlinOutput { internalVisibility = true }
+    buildConfigField(
+        "String",
+        "BASE_URL",
+        "\"${project.findProperty("API_BASE_URL")}\""
+    )
 }

@@ -74,7 +74,6 @@ import androidx.navigation.NavDestination
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import movies.sharedcode.generated.resources.Res
 import movies.sharedcode.generated.resources.app_name

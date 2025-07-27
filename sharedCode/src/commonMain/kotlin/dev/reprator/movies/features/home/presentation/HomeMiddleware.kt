@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 @TheReprator
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.reprator.movies.features.home.presentation
 
 import dev.reprator.movies.features.home.domain.models.HomeCategoryType
@@ -26,17 +42,17 @@ import kotlin.coroutines.CoroutineContext
 class HomeMiddleware(
     private val moveUseCase: MovieUseCase,
     private val tvUseCase: TvUseCase,
-    private val dispatchers: AppCoroutineDispatchers
-) : Middleware<HomeState, HomeAction, HomeEffect>, CoroutineScope {
+    private val dispatchers: AppCoroutineDispatchers,
+) : Middleware<HomeState, HomeAction, HomeEffect>,
+    CoroutineScope {
 
-    // Keep track of current page for each paginated section
     private val sectionCurrentPage = mutableMapOf<HomeCategoryType, Int>()
-    // Keep track of whether more items are available for each section
     private val sectionHasMore = mutableMapOf<HomeCategoryType, Boolean>()
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Napier.e(throwable) { "Coroutine exception" }
-    }
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Napier.e(throwable) { "Coroutine exception" }
+        }
 
     override val coroutineContext: CoroutineContext =
         SupervisorJob() + Dispatchers.Main.immediate + coroutineExceptionHandler
@@ -53,10 +69,9 @@ class HomeMiddleware(
 
     override fun onAction(
         action: HomeAction,
-        state: HomeState
+        state: HomeState,
     ) {
         when (action) {
-
             is HomeAction.LoadHomeData -> {
                 sectionCurrentPage.clear()
                 sectionHasMore.clear()
@@ -74,7 +89,6 @@ class HomeMiddleware(
             }
 
             else -> {
-
             }
         }
     }
@@ -86,14 +100,13 @@ class HomeMiddleware(
     }
 
     private fun fetchTvEpisodes() {
-
         launch(dispatchers.io) {
             val sectionValue = sectionHasMore.getOrElse(HomeCategoryType.HOME_CATEGORY_TV) { true }
-            if(!sectionValue) {
+            if (!sectionValue) {
                 mviDispatcher.await()(
                     HomeAction.SectionLoaded(
-                        HomeCategoryType.HOME_CATEGORY_TV
-                    )
+                        HomeCategoryType.HOME_CATEGORY_TV,
+                    ),
                 )
                 return@launch
             }
@@ -103,16 +116,16 @@ class HomeMiddleware(
             withContext(dispatchers.main) {
                 when (result) {
                     is AppSuccess<List<HomeEpisodeOverView>> -> {
-                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_TV] = currentTvPage+1
-                        if(result.data.isEmpty()) {
+                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_TV] = currentTvPage + 1
+                        if (result.data.isEmpty()) {
                             sectionHasMore[HomeCategoryType.HOME_CATEGORY_TV] = false
                         }
 
                         mviDispatcher.await() (
                             HomeAction.SectionLoaded(
                                 sectionType = HomeCategoryType.HOME_CATEGORY_TV,
-                                items = result.data
-                            )
+                                items = result.data,
+                            ),
                         )
                     }
 
@@ -120,8 +133,8 @@ class HomeMiddleware(
                         mviDispatcher.await()(
                             HomeAction.SectionLoadError(
                                 HomeCategoryType.HOME_CATEGORY_TV,
-                                result.message ?: result.throwable?.message ?: ""
-                            )
+                                result.message ?: result.throwable?.message ?: "",
+                            ),
                         )
                     }
                 }
@@ -132,11 +145,11 @@ class HomeMiddleware(
     private fun fetchMovies() {
         launch(dispatchers.io) {
             val sectionValue = sectionHasMore.getOrElse(HomeCategoryType.HOME_CATEGORY_MOVIE) { true }
-            if(!sectionValue) {
+            if (!sectionValue) {
                 mviDispatcher.await()(
                     HomeAction.SectionLoaded(
-                        HomeCategoryType.HOME_CATEGORY_MOVIE
-                    )
+                        HomeCategoryType.HOME_CATEGORY_MOVIE,
+                    ),
                 )
                 return@launch
             }
@@ -146,15 +159,15 @@ class HomeMiddleware(
             withContext(dispatchers.main) {
                 when (result) {
                     is AppSuccess<List<HomeMovieDisplayableItem>> -> {
-                        if(result.data.isEmpty()) {
+                        if (result.data.isEmpty()) {
                             sectionHasMore[HomeCategoryType.HOME_CATEGORY_MOVIE] = false
                         }
-                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_MOVIE] = currentMoviePage+1
+                        sectionCurrentPage[HomeCategoryType.HOME_CATEGORY_MOVIE] = currentMoviePage + 1
                         mviDispatcher.await()(
                             HomeAction.SectionLoaded(
                                 sectionType = HomeCategoryType.HOME_CATEGORY_MOVIE,
-                                items = result.data
-                            )
+                                items = result.data,
+                            ),
                         )
                     }
 
@@ -162,8 +175,8 @@ class HomeMiddleware(
                         mviDispatcher.await()(
                             HomeAction.SectionLoadError(
                                 HomeCategoryType.HOME_CATEGORY_MOVIE,
-                                result.message ?: result.throwable?.message ?: ""
-                            )
+                                result.message ?: result.throwable?.message ?: "",
+                            ),
                         )
                     }
                 }
@@ -177,12 +190,11 @@ class HomeMiddleware(
             withContext(dispatchers.main) {
                 when (result) {
                     is AppSuccess<List<MovieGenreItem>> -> {
-
                         mviDispatcher.await()(
                             HomeAction.SectionLoaded(
                                 sectionType = HomeCategoryType.HOME_CATEGORY_GENRE,
-                                genres = result.data
-                            )
+                                genres = result.data,
+                            ),
                         )
                     }
 
@@ -190,8 +202,8 @@ class HomeMiddleware(
                         mviDispatcher.await()(
                             HomeAction.SectionLoadError(
                                 HomeCategoryType.HOME_CATEGORY_GENRE,
-                                result.message ?: result.throwable?.message ?: ""
-                            )
+                                result.message ?: result.throwable?.message ?: "",
+                            ),
                         )
                     }
                 }
@@ -200,7 +212,6 @@ class HomeMiddleware(
     }
 
     private fun fetchSection(sectionType: HomeCategoryType) {
-
         when (sectionType) {
             HomeCategoryType.HOME_CATEGORY_MOVIE -> {
                 fetchMovies()
@@ -214,6 +225,5 @@ class HomeMiddleware(
                 fetchMovieGenre()
             }
         }
-
     }
 }

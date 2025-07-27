@@ -38,12 +38,13 @@ class HomeViewModel(
     private val dispatchers: AppCoroutineDispatchers,
     private val middleWareList: Set<Middleware<HomeState, HomeAction, HomeEffect>>,
     private val reducer: Reducer<HomeState, HomeAction, HomeEffect>,
-) : ViewModel(), MVI<HomeState, HomeAction, HomeEffect> by mvi(
-    dispatchers,
-    reducer,
-    middleWareList,
-    HomeState.initial()
-) {
+) : ViewModel(),
+    MVI<HomeState, HomeAction, HomeEffect> by mvi(
+        dispatchers,
+        reducer,
+        middleWareList,
+        HomeState.initial(),
+    ) {
     override fun onCleared() {
         closeScope()
         super.onCleared()

@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,38 +29,49 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import dev.reprator.movies.features.home.domain.models.CategoryDisplayableItem
-import dev.reprator.movies.features.home.domain.models.HomeCategoryType
-import dev.reprator.movies.features.home.domain.models.HomeSectionModel
 import dev.reprator.movies.features.home.domain.models.DisplayableItem
+import dev.reprator.movies.features.home.domain.models.DisplayableItemLoader
+import dev.reprator.movies.features.home.domain.models.HomeSectionModel
+import dev.reprator.movies.features.home.domain.models.MovieGenreItem
 import dev.reprator.movies.features.home.domain.models.ResultStatus
 import dev.reprator.movies.features.home.presentation.HomeAction
 import dev.reprator.movies.features.home.presentation.HomeState
 import dev.reprator.movies.features.home.presentation.HomeViewModel
-import io.github.aakira.napier.Napier
 import me.tatarka.inject.annotations.Inject
-
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private typealias OnAction = (HomeAction) -> Unit
 
@@ -74,11 +85,15 @@ fun HomeScreen(
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
+    var shouldReload by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        homeViewModel.onAction(HomeAction.LoadHomeData)
+        if (!shouldReload) {
+            homeViewModel.onAction(HomeAction.LoadHomeData)
+            shouldReload = true
+        }
     }
 
-    Napier.e { "HomeScreen ${uiState.sections}" }
     HomeScreen(uiState, { action ->
         homeViewModel.onAction(action)
     }, modifier)
@@ -88,10 +103,9 @@ fun HomeScreen(
 fun HomeScreen(
     homeState: HomeState,
     onAction: OnAction,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mainLazyListState: LazyListState = rememberLazyListState()
 ) {
-    val mainLazyListState = rememberLazyListState()
-
     LazyColumn(
         state = mainLazyListState,
         modifier = modifier.fillMaxSize(),
@@ -105,13 +119,18 @@ fun HomeScreen(
         ) { homeModelSection ->
             when (homeModelSection) {
                 is HomeSectionModel.GenreChipsSection -> {
+                    if (homeModelSection.status == ResultStatus.RESULT_STATUS_RESULT) {
+                        GenreChipsSection(homeModelSection.genres, onAction)
+                    }
                 }
+
                 is HomeSectionModel.ItemCarouselSection -> {
                     SectionContainer(
                         sectionTitle = homeModelSection.categoryName,
                         sectionResultStatus = homeModelSection.status,
                         items = homeModelSection.items,
-                        onSectionRetry = { onAction(HomeAction.RetrySection(homeModelSection.sectionId)) }
+                        onSectionRetry = { onAction(HomeAction.RetrySection(homeModelSection.sectionId)) },
+                        onPaginate = { onAction(HomeAction.CarouselPagination(homeModelSection.sectionId)) }
                     )
                 }
             }
@@ -124,11 +143,61 @@ fun HomeScreen(
 }
 
 @Composable
+fun GenreChipsSection(
+    genres: List<MovieGenreItem>,
+    onAction: OnAction,
+    modifier: Modifier = Modifier,
+    lazyState: LazyListState = rememberLazyListState(),
+) {
+    LazyRow(
+        state = lazyState,
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        items(
+            items = genres,
+            key = { genre -> genre.id }
+        ) { genreItem ->
+            GenreChipsItemTile(
+                item = genreItem,
+                onAction = onAction
+            )
+        }
+    }
+}
+
+@Composable
+fun GenreChipsItemTile(
+    item: MovieGenreItem,
+    onAction: OnAction,
+    modifier: Modifier = Modifier
+) {
+    FilterChip(
+        selected = item.isSelected,
+        onClick = { onAction(HomeAction.MovieGenreItemSelect(item)) },
+        label = {
+            Text(
+                text = item.name,
+                color = if (item.isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant // Or your desired unselected text color
+            )
+        },
+        modifier = modifier.padding(horizontal = 4.dp),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = Color.DarkGray.copy(alpha = 0.8f),
+            selectedContainerColor = Color.Red
+        )
+    )
+}
+
+@Composable
 fun SectionContainer(
     sectionTitle: String,
     sectionResultStatus: ResultStatus,
     items: List<DisplayableItem>,
     onSectionRetry: () -> Unit,
+    onPaginate: () -> Unit,
 ) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
@@ -142,32 +211,63 @@ fun SectionContainer(
             ResultStatus.RESULT_STATUS_LOADER -> {
                 WidgetSectionLoader()
             }
+
             ResultStatus.RESULT_STATUS_EMPTY -> {
                 WidgetSectionEmpty("No items found in this section.")
             }
+
             ResultStatus.RESULT_STATUS_ERROR -> {
                 WidgetSectionError("Failed to load this section.", onSectionRetry)
             }
+
             ResultStatus.RESULT_STATUS_RESULT -> {
-                val horizontalLazyListState = rememberLazyListState()
-                LazyRow(
-                    state = horizontalLazyListState,
-                    contentPadding = PaddingValues(horizontal = 12.dp), // Start padding before first item
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(
-                        items = items,
-                        key = { it.id },
-                        contentType = { item -> item.itemType } // Use the item's own ResultStatus
-                    ) { itemData -> // itemData is an ItemType
-                        RenderItemType(
-                            item = itemData,
-                            onRetry = {
-                            }
-                        )
+                val lazyListState: LazyListState = rememberLazyListState()
+
+                val shouldLoadMore by remember {
+                    derivedStateOf {
+                        val layoutInfo = lazyListState.layoutInfo
+                        val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                        val totalItemsCount = layoutInfo.totalItemsCount
+                        lastVisibleItemIndex != null && totalItemsCount > 0 &&
+                                lastVisibleItemIndex >= totalItemsCount - 3 // Threshold
                     }
                 }
+
+                LaunchedEffect(shouldLoadMore) {
+                    if (shouldLoadMore && items.lastOrNull() !is DisplayableItemLoader) {
+                        onPaginate()
+                    }
+                }
+
+                RenderCarouselItem(items, onSectionRetry, lazyListState = lazyListState)
             }
+        }
+    }
+}
+
+@Composable
+fun RenderCarouselItem(
+    items: List<DisplayableItem>,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState()
+) {
+
+    LazyRow(
+        state = lazyListState,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        items(
+            items = items,
+            key = { it.id },
+            contentType = { item -> item.itemType }
+        ) { itemData ->
+            RenderItemType(
+                item = itemData,
+                onRetry = onRetry
+            )
         }
     }
 }
@@ -178,18 +278,17 @@ fun RenderItemType(item: DisplayableItem, onRetry: () -> Unit, modifier: Modifie
         ResultStatus.RESULT_STATUS_LOADER -> {
             WidgetItemLoader(modifier)
         }
+
         ResultStatus.RESULT_STATUS_EMPTY -> {
             WidgetItemEmpty(modifier)
         }
+
         ResultStatus.RESULT_STATUS_ERROR -> {
             WidgetItemError(onRetry = onRetry, modifier = modifier)
         }
+
         ResultStatus.RESULT_STATUS_RESULT -> {
-            if (item is CategoryDisplayableItem) {
-                ActualContentItemCard(item = item, modifier = modifier)
-            } else {
-                Box(modifier.padding(8.dp)) { Text("Result (Unknown Type)", fontSize = 10.sp) }
-            }
+            ActualContentItemCard(item = item as CategoryDisplayableItem, modifier = modifier)
         }
     }
 }
@@ -200,7 +299,7 @@ fun WidgetSectionLoader(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp) // Example height
+            .height(200.dp)
             .background(Color.LightGray.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center
     ) {
@@ -286,24 +385,41 @@ fun ActualContentItemCard(item: CategoryDisplayableItem, modifier: Modifier = Mo
         modifier = modifier
             .width(120.dp)
             .height(180.dp)
-            .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(100.dp)
+        Box {
+            AsyncImage(
+                model = item.posterImage,
+                contentDescription = item.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Row(modifier = Modifier.align(Alignment.BottomStart)
                     .fillMaxWidth()
-                    .background(Color.DarkGray)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(item.posterImage, color = Color.White, modifier = Modifier.align(Alignment.Center), fontSize = 10.sp)
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "⭐${item.ratings}",
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(item.name, style = MaterialTheme.typography.titleSmall, maxLines = 2)
-            Text(item.ratings, style = MaterialTheme.typography.bodySmall)
+
         }
     }
 }
 
+@Preview
+@Composable
+fun GenreChipsSectionPreview() {
+    val itemList = listOf(MovieGenreItem("1", "Action"), MovieGenreItem("2", "Drama", true))
+    GenreChipsSection(genres = itemList, onAction = {})
+}

@@ -54,7 +54,7 @@ interface Reducer<S : UiState, A : UiAction, E : SideEffect> {
 
 typealias ActionDispatcher<A> = (A) -> Unit
 
-interface Middleware<S : UiState, A : UiAction, E : SideEffect>: AutoCloseable {
+interface Middleware<S : UiState, A : UiAction, E : SideEffect> : AutoCloseable {
     fun onAction(
         action: A,
         state: S,

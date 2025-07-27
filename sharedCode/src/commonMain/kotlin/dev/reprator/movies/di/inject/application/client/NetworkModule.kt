@@ -16,6 +16,7 @@
 
 package dev.reprator.movies.di.inject.application.client
 
+import dev.reprator.movies.BuildConfig
 import dev.reprator.movies.di.inject.ApplicationScope
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -97,7 +98,7 @@ interface NetworkModule {
 
                 url {
                     protocol = URLProtocol.HTTP
-                    host = "103.134.58.242"
+                    host = BuildConfig.BASE_URL
                 }
             }
 

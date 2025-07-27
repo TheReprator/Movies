@@ -25,7 +25,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.core.net.toUri
 import dev.reprator.movies.di.inject.component.AndroidActivityComponent
 import dev.reprator.movies.di.inject.component.AndroidApplicationComponent
 import dev.reprator.movies.di.inject.component.create
