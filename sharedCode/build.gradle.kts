@@ -211,6 +211,6 @@ buildConfig {
     buildConfigField(
         "String",
         "BASE_URL",
-        "\"${project.findProperty("API_BASE_URL")}\""
+        "\"${project.findProperty("API_BASE_URL")}\"",
     )
 }

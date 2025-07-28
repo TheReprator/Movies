@@ -51,19 +51,23 @@ class TvMapper : Mapper<ResponseModelTv, HomeEpisodeOverView> {
                 },
         )
 
-
     companion object {
-        fun getPosterImageUrl(type: HomeCategoryType, id: String, posterImage: String?): String {
-            if(true == posterImage?.trim()?.isEmpty()) {
+        fun getPosterImageUrl(
+            type: HomeCategoryType,
+            id: String,
+            posterImage: String?,
+        ): String {
+            if (true == posterImage?.trim()?.isEmpty()) {
                 return ""
             }
             val baseUrl = BuildConfig.BASE_URL
 
-            val imageUrl = when (type) {
-                HomeCategoryType.HOME_CATEGORY_MOVIE -> "http://$baseUrl/Admin/main/images/$id/poster/$posterImage"
-                HomeCategoryType.HOME_CATEGORY_TV -> "http://$baseUrl/Admin/main/TVseries/$id/poster/$posterImage"
-                else -> "" // Or some placeholder
-            }
+            val imageUrl =
+                when (type) {
+                    HomeCategoryType.HOME_CATEGORY_MOVIE -> "http://$baseUrl/Admin/main/images/$id/poster/$posterImage"
+                    HomeCategoryType.HOME_CATEGORY_TV -> "http://$baseUrl/Admin/main/TVseries/$id/poster/$posterImage"
+                    else -> ""
+                }
 
             return imageUrl
         }

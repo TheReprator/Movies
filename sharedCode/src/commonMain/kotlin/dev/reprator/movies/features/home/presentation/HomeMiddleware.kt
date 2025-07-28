@@ -45,7 +45,6 @@ class HomeMiddleware(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Middleware<HomeState, HomeAction, HomeEffect>,
     CoroutineScope {
-
     private val sectionCurrentPage = mutableMapOf<HomeCategoryType, Int>()
     private val sectionHasMore = mutableMapOf<HomeCategoryType, Boolean>()
 

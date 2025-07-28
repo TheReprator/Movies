@@ -47,5 +47,5 @@ data class HomeEpisodeOverView(
 data class MovieGenreItem(
     val id: String,
     val name: String,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
 )
