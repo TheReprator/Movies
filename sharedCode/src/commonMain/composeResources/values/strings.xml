@@ -8,4 +8,7 @@
     <string name="navigation_drawer">Navigation Drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="search">Search</string>
+
+    <string name="app_retry">Retry</string>
+    <string name="app_error_generic">An Error occurred</string>
 </resources>

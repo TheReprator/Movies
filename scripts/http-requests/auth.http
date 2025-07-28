@@ -1,33 +1,100 @@
-# USER LIST
-GET {{base-url}}/users
+# Dashboard Movie
+GET {{base-url}}/api/v1/movies.php?sort_by=uploadTime DESC&limit=10
 Content-Type: application/json
-Authorization: Token {{auth_token}}
+Accept-Encoding: gzip, deflate
 
 > {%
     client.test("Request executed successfully", function () {
         client.assert(response.status === 200, "Response status is not 200");
     });
 %}
-
 ###
 
-# USER DETAIL
-GET {{base-url}}/users/{{username}}
+# Dashboard Movie page test 1
+GET {{base-url}}/api/v1/movies.php?sort_by=uploadTime DESC&limit=10&page=1
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
-
 ###
 
-# USER REPOS
-GET {{base-url}}/users/{{username}}/repos
+
+# Dashboard Tv shows
+#@no-auto-encoding
+GET {{base-url}}/api/v1/tvshows.php?sort_by=uploadTime+DESC&limit=10
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
-
 ###
 
-# USER SEARCH LIST
-GET {{base-url}}/search/users?q={{username}}
-Accept: application/json
-Authorization: Bearer {{auth_token}}
 
+# Dashboard Movie Genre
+GET {{base-url}}/api/v1/moviegenre.php
+Content-Type: application/json
 ###
+
+
+# Dashboard Movie Menu
+GET {{base-url}}/api/v1/menu.php
+Content-Type: application/json
+###
+
+
+# Dashboard TV Genre
+GET {{base-url}}/api/v1/tvgenre.php
+Content-Type: application/json
+###
+
+
+# Dashboard Genre Section
+GET {{base-url}}/genre_section.json?timestamp={{$timestamp}}
+Content-Type: application/json
+###
+
+
+# Dashboard Movie Sub Menu
+GET {{base-url}}/api/v1/menu.php?parent=movie
+Content-Type: application/json
+###
+
+
+# Dashboard Tv Sub Menu
+GET {{base-url}}/api/v1/menu.php?parent=tv
+Content-Type: application/json
+###
+
+
+# Dashboard Tv Episodes
+GET {{base-url}}/api/v1/tvepisodes.php?tvid=114471
+Content-Type: application/json
+###
+
+
+# Dashboard Movie Category hindi
+#@no-auto-encoding
+GET {{base-url}}/api/v1/movies.php?category=Hindi+Movies&sort_by=uploadTime+DESC&limit=10
+Content-Type: application/json
+###
+
+
+# Dashboard Movie Category english
+#@no-auto-encoding
+GET {{base-url}}/api/v1/movies.php?category=English+Movies&sort_by=uploadTime+DESC&limit=10
+Content-Type: application/json
+###
+
+
+# Dashboard Tv Series Category english
+#@no-auto-encoding
+GET {{base-url}}/api/v1/tvshows.php?category=Cartoon&sort_by=uploadTime+DESC&limit=10
+Content-Type: application/json
+###
+
+
+# Dashboard Tv Series Category english
+#@no-auto-encoding
+GET {{base-url}}/api/v1/search.php?search=squid+gam
+Content-Type: application/json
+###
+
+
+
+#Random check
+http://103.145.232.246/api/v1/movies.php%3Fsort_by=uploadTime%20DESC&limit=10?page=1
+Content-Type: application/json
+Accept-Encoding: gzip, deflate
