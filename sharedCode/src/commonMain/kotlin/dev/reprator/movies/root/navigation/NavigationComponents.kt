@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 @TheReprator
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.reprator.movies.root.navigation
 
 import androidx.compose.foundation.background
@@ -68,12 +84,19 @@ import org.jetbrains.compose.resources.stringResource
 private fun WindowSizeClass.isCompact() = windowWidthSizeClass == WindowWidthSizeClass.COMPACT ||
         windowHeightSizeClass == WindowHeightSizeClass.COMPACT
 
+//  Handle landscape scenarios for NavigationRail (phones/tablets in landscape)
+//    A common definition for landscape suitable for a NavRail is when width is Medium/Expanded
+//    AND height is Compact. Or, simply, if the width allows for a rail.
+private fun WindowSizeClass.isLandScape() = (windowWidthSizeClass == WindowWidthSizeClass.MEDIUM && windowHeightSizeClass == WindowHeightSizeClass.COMPACT) ||
+        (windowWidthSizeClass == WindowWidthSizeClass.EXPANDED && windowHeightSizeClass == WindowHeightSizeClass.COMPACT) ||
+        (windowWidthSizeClass == WindowWidthSizeClass.MEDIUM && windowHeightSizeClass == WindowHeightSizeClass.MEDIUM)
+
 class AppNavSuiteScope(val navSuiteType: NavigationSuiteType)
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ReplyNavigationWrapper(
+fun MoviesNavigationWrapper(
     currentDestination: NavDestination?,
     navigateToTopLevelDestination: (AppTopLevelDestination) -> Unit,
     adaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -84,10 +107,19 @@ fun ReplyNavigationWrapper(
     }
 
     val navLayoutType = when {
-        adaptiveInfo.windowPosture.isTabletop -> NavigationSuiteType.NavigationBar
-        adaptiveInfo.windowSizeClass.isCompact() -> NavigationSuiteType.NavigationBar
+        adaptiveInfo.windowPosture.isTabletop ->
+            NavigationSuiteType.NavigationBar
+
         adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED &&
-                windowSize.width >= 1200.dp -> NavigationSuiteType.NavigationDrawer
+                windowSize.width >= 1200.dp ->
+            NavigationSuiteType.NavigationDrawer
+
+        adaptiveInfo.windowSizeClass.isLandScape() ->
+            NavigationSuiteType.NavigationRail
+
+        adaptiveInfo.windowSizeClass.isCompact() ->  NavigationSuiteType.NavigationBar
+
+
         else -> NavigationSuiteType.NavigationRail
     }
 
