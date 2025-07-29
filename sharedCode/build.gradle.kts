@@ -52,6 +52,7 @@ kotlin {
         iosTarget.binaries.framework {
             isStatic = true
             baseName = "MoviesApp"
+            freeCompilerArgs += "-Xbinary=bundleId=dev.reprator.movies"
         }
     }
 

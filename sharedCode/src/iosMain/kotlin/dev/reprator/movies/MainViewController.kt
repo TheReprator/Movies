@@ -17,18 +17,30 @@
 package dev.reprator.movies
 
 import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.uikit.LocalUIViewController
 import androidx.compose.ui.window.ComposeUIViewController
 import me.tatarka.inject.annotations.Inject
 import platform.UIKit.UIViewController
-import dev.reprator.movies.root.AppRouteFactory
-
+import dev.reprator.movies.root.MoviesContent
+import platform.Foundation.NSURL
+import platform.SafariServices.SFSafariViewController
 
 typealias MoviesUiViewController = () -> UIViewController
 
 @OptIn(ExperimentalComposeApi::class)
 @Inject
 fun MoviesUiViewController(
-    routeFactories: Set<AppRouteFactory>
+    rootContent: MoviesContent,
 ): UIViewController = ComposeUIViewController() {
-    App(routeFactories)
+    val uiViewController = LocalUIViewController.current
+    rootContent.Content(
+
+        onOpenUrl = { url ->
+            val safari = SFSafariViewController(NSURL(string = url))
+            uiViewController.presentViewController(safari, animated = true, completion = null)
+            true
+        },
+        modifier = Modifier,
+    )
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.window.rememberWindowState
 import dev.reprator.movies.di.inject.component.DesktopApplicationComponent
 import dev.reprator.movies.di.inject.component.WindowComponent
 import dev.reprator.movies.di.inject.component.create
+import java.awt.Dimension
 
 fun main() =
     application {
@@ -35,7 +36,7 @@ fun main() =
 
         val winState =
             rememberWindowState(
-                width = 400.dp,
+                width = 800.dp,
                 height = 600.dp,
             )
 
@@ -44,6 +45,7 @@ fun main() =
             onCloseRequest = ::exitApplication,
             title = "Movies",
         ) {
+            window.minimumSize = Dimension(350, 600)
            /* if (winState.size.width < 350.dp) {
                 winState.size = DpSize(400.dp, winState.size.height)
             }*/
