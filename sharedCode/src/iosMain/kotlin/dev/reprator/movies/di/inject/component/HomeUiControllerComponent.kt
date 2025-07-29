@@ -16,7 +16,7 @@
 
 package dev.reprator.movies.di.inject.component
 
-import dev.reprator.movies.GithubUiViewController
+import dev.reprator.movies.MoviesUiViewController
 import dev.reprator.movies.di.inject.ActivityScope
 import dev.reprator.movies.di.inject.activity.SharedModuleComponent
 import me.tatarka.inject.annotations.Component
@@ -32,7 +32,7 @@ abstract class HomeUiControllerComponent(
 
     @Provides
     @ActivityScope
-    fun uiViewController(bind: GithubUiViewController): UIViewController = bind()
+    fun uiViewController(bind: MoviesUiViewController): UIViewController = bind()
 
     companion object
 }
