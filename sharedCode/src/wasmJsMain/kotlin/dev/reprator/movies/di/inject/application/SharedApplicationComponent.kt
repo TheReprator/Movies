@@ -16,6 +16,7 @@
 
 package dev.reprator.movies.di.inject.application
 
+import coil3.disk.DiskCache
 import dev.reprator.movies.di.inject.ApplicationScope
 
 import dev.reprator.movies.util.wrapper.AppCoroutineDispatchers
@@ -50,4 +51,8 @@ actual interface SharedPlatformApplicationComponent {
         versionCode = 1,
         platform = Platform.WEB_WASM,
         cachePath = { "" })
+
+    @ApplicationScope
+    @Provides
+    fun provideCoilDiskCache(applicationInfo: ApplicationInfo): DiskCache? = null
 }

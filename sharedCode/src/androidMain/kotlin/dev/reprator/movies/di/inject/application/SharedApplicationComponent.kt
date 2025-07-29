@@ -18,6 +18,7 @@ package dev.reprator.movies.di.inject.application
 
 import android.app.Application
 import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
+import coil3.disk.DiskCache
 import dev.reprator.movies.di.inject.ApplicationScope
 import dev.reprator.movies.util.wrapper.AppCoroutineDispatchers
 import dev.reprator.movies.util.wrapper.ApplicationInfo
@@ -27,6 +28,7 @@ import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Provides
+import okio.Path.Companion.toPath
 
 actual interface SharedPlatformApplicationComponent {
 
@@ -62,4 +64,11 @@ actual interface SharedPlatformApplicationComponent {
             platform = Platform.ANDROID,
         )
     }
+
+    @ApplicationScope
+    @Provides
+    fun provideCoilDiskCache(applicationInfo: ApplicationInfo): DiskCache? =
+        DiskCache.Builder()
+            .directory(applicationInfo.cachePath().toPath().resolve("coil_cache"))
+            .build()
 }

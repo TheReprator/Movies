@@ -16,6 +16,7 @@
 
 package dev.reprator.movies.di.inject.application
 
+import coil3.disk.DiskCache
 import dev.reprator.movies.di.inject.ApplicationScope
 
 import dev.reprator.movies.util.wrapper.AppCoroutineDispatchers
@@ -26,6 +27,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import me.tatarka.inject.annotations.Provides
+import okio.Path.Companion.toPath
 import platform.Foundation.NSBundle
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSFileManager
@@ -63,6 +65,13 @@ actual interface SharedPlatformApplicationComponent {
         cachePath = { NSFileManager.defaultManager.cacheDir },
         platform = dev.reprator.movies.util.wrapper.Platform.IOS,
     )
+
+    @ApplicationScope
+    @Provides
+    fun provideCoilDiskCache(applicationInfo: ApplicationInfo): DiskCache? =
+        DiskCache.Builder()
+            .directory(applicationInfo.cachePath().toPath().resolve("coil_cache"))
+            .build()
 }
 
 @OptIn(ExperimentalForeignApi::class)

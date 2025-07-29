@@ -46,7 +46,7 @@ androidx-material3-window = { group = "org.jetbrains.androidx.window", name = "w
 compose-adaptive-accompanist = "com.google.accompanist:accompanist-adaptive:0.37.3"
 
 
-compose-media-swing = { module = "uk.co.caprica:vlcj", version = "5.0.0-M4" }
+compose-media-desktop-vlc = { module = "uk.co.caprica:vlcj", version = "4.11.0" }
 compose-media-exo = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "composeMedia" }
 compose-media-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "composeMedia" }
 compose-media-common = { group = "androidx.media3", name = "media3-common", version.ref = "composeMedia" }

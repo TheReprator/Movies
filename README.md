@@ -26,5 +26,5 @@
         └────────┘ └────────────────────────────┘
 ```
 
-## 📐 Fastlane setup
-    https://proandroiddev.com/ci-cd-pipeline-for-flavoured-android-apps-using-fastlane-and-github-actions-51667b7175af
+## 📐 Cors bypass
+    https://chromewebstore.google.com/detail/moesif-origincors-changer/

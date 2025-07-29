@@ -37,6 +37,7 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
 import dev.reprator.movies.root.navigation.AppNavigationActions
 import dev.reprator.movies.root.navigation.MoviesNavigationWrapper
@@ -44,8 +45,8 @@ import dev.reprator.movies.root.navigation.Route
 import dev.reprator.movies.util.wrapper.ApplicationInfo
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import io.ktor.client.HttpClient
 import me.tatarka.inject.annotations.Inject
-import okio.Path.Companion.toPath
 
 interface MoviesContent {
     @Composable
@@ -58,7 +59,9 @@ interface MoviesContent {
 @Inject
 class DefaultMoviesContent(
     private val appRouteFactory: Set<AppRouteFactory>,
-    private val applicationInfo: ApplicationInfo
+    private val applicationInfo: ApplicationInfo,
+    private val httpClient: Lazy<HttpClient>,
+    private val diskCache: Lazy<DiskCache?>
 ) : MoviesContent {
 
     @Composable
@@ -70,7 +73,7 @@ class DefaultMoviesContent(
         Napier.base(DebugAntilog())
 
         setSingletonImageLoaderFactory { context ->
-            newImageLoader(context, applicationInfo)
+            newImageLoader(context, applicationInfo, httpClient, diskCache)
         }
 
         MaterialTheme {
@@ -94,7 +97,7 @@ fun MoviesApp(routeFactories: Set<AppRouteFactory>) {
 
     Surface {
         MoviesNavigationWrapper(
-            adaptiveInfo= adaptiveInfo,
+            adaptiveInfo = adaptiveInfo,
             currentDestination = currentDestination,
             navigateToTopLevelDestination = navigationActions::navigateTo,
         ) {
@@ -129,19 +132,19 @@ fun RootNavigation(
 private fun newImageLoader(
     context: PlatformContext,
     applicationInfo: ApplicationInfo,
+    httpClient: Lazy<HttpClient>,
+    diskCache: Lazy<DiskCache?>
 ): ImageLoader {
 
-    return ImageLoader.Builder(context)
-        .memoryCache {
+    return ImageLoader.Builder(context).components {
+        KtorNetworkFetcherFactory(httpClient = { httpClient.value })
+    }.memoryCache {
             MemoryCache.Builder()
                 .maxSizePercent(context, percent = 0.25)
                 .build()
-        }
-        .diskCache {
-            DiskCache.Builder()
-                .directory(applicationInfo.cachePath().toPath().resolve("coil_cache"))
-                .build()
-        }
+        }.diskCache{
+        diskCache.value
+    }
         .apply {
             if (applicationInfo.debugBuild) {
                 logger(DebugLogger())

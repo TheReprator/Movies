@@ -16,11 +16,17 @@
 
 package dev.reprator.movies.features.movies.presentation.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.reprator.movies.features.home.presentation.HomeViewModel
+import dev.reprator.movies.videoPlayer.VideoPlayer
 import me.tatarka.inject.annotations.Inject
 
 
@@ -32,4 +38,25 @@ fun MoviesScreen(
     modifier: Modifier = Modifier
 ) {
     Text("Movie Screen")
+
+    Column(modifier = Modifier.fillMaxWidth().height(400.dp).width(300.dp)) {
+
+        VideoPlayer(
+            url =
+                "http://sample.vodobox.com/planete_interdite/planete_interdite_alternate.m3u8"
+        )
+    }
+    /*
+    *  Column {
+        Button(onClick = {
+            scope.launch {
+                player.playUri("http://sample.vodobox.com/planete_interdite/planete_interdite_alternate.m3u8")
+            }
+        }) {
+            Text("Play")
+        }
+
+        MediampPlayerSurface(player, Modifier.fillMaxSize())
+    }
+    * */
 }

@@ -135,7 +135,7 @@ kotlin {
         }
 
         desktopMain.dependencies {
-            implementation(libs.compose.media.swing)
+            implementation(libs.compose.media.desktop.vlc)
 
             implementation(compose.desktop.currentOs)
             implementation(libs.ktor.client.java)

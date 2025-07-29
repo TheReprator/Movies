@@ -81,7 +81,7 @@ buildJsWeb: cleanBuild
 # Run wasm UI test
 testUiJsWeb: cleanBuild
 	@echo "Web Js UI test"
-	$(GRADLEW) iosApp:iosSimulatorArm64Test
+	$(GRADLEW) webApp:wasmJs:wasmJsBrowserDevelopmentRun
 	@echo "✅ Done!"
 
 # Run Shared Unit test
@@ -103,16 +103,16 @@ testUiAndroid: cleanBuild
 	@echo "✅ Done!"
 
 
-# Run wasm UI test
-testUiJsWeb: cleanBuild
-	@echo "Web Js UI test"
+# Run Ios UI test
+testUiIos: cleanBuild
+	@echo "IOS UI test"
 	$(GRADLEW) iosApp:iosSimulatorArm64Test
 	@echo "✅ Done!"
 
 # Run JS UI test
 testUiJsWeb: cleanBuild
 	@echo "Web Js UI test"
-	$(GRADLEW) webApp:wasm:jsBrowserTest
+	$(GRADLEW) webApp:js:jsBrowserTest
 	@echo "✅ Done!"
 
 # Run wasm UI test
