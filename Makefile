@@ -76,7 +76,7 @@ buildHotDesktop: clear
 	@echo "✅ Done!"
 
 # Run wasm build
-buildWasmWeb:
+buildWasmWeb: cleanBuild
 	@echo "⏳Web Wasm build"
 	$(GRADLEW) webApp:wasmJsBrowserDevelopmentRun --continuous
 	@echo "✅ Done!"

@@ -27,52 +27,29 @@ plugins {
 }
 
 kotlin {
-    js {
-        outputModuleName.set("movies")
-        browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                sourceMaps = true
-                outputFileName = "movies.js"
-                devServer =
-                    (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                        static =
-                            (static ?: mutableListOf()).apply {
-                                // Serve sources to debug inside browser
-                                add(rootDirPath)
-                                add(projectDirPath)
-                            }
-                        port = 8080
-                    }
-            }
-        }
-        generateTypeScriptDefinitions()
-        binaries.executable()
-    }
+    listOf(
+        js(),
+        wasmJs()
+    ).forEach { target ->
+        target.generateTypeScriptDefinitions()
+        target.outputModuleName.set("movies")
+        target.binaries.executable()
 
-    wasmJs {
-        outputModuleName.set("movies")
-        browser {
+        target.browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 sourceMaps = true
-                outputFileName = "movies.js"
-                devServer =
-                    (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                        static =
-                            (static ?: mutableListOf()).apply {
-                                // Serve sources to debug inside browser
-                                add(rootDirPath)
-                                add(projectDirPath)
-                            }
-                        port = 8081
+                outputFileName = "movies.js" // This is the same for both
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        add(rootDirPath)
+                        add(projectDirPath)
                     }
+                    port = 8081
+                }
             }
         }
-        generateTypeScriptDefinitions()
-        binaries.executable()
     }
 
     sourceSets {

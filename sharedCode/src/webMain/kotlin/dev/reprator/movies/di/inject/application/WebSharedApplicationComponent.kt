@@ -20,7 +20,6 @@ import coil3.disk.DiskCache
 import dev.reprator.movies.di.inject.ApplicationScope
 
 import dev.reprator.movies.util.wrapper.AppCoroutineDispatchers
-import dev.reprator.movies.util.wrapper.ApplicationInfo
 import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Provides
 
@@ -37,5 +36,5 @@ interface WebSharedApplicationComponent {
 
     @ApplicationScope
     @Provides
-    fun provideCoilDiskCache(applicationInfo: ApplicationInfo): DiskCache? = null
+    fun provideCoilDiskCache(): DiskCache? = null
 }

@@ -65,18 +65,14 @@ kotlin {
         }
     }
 
-    wasmJs {
-        outputModuleName = "MoviesShared"
-        browser()
-        generateTypeScriptDefinitions()
-        binaries.library()
-    }
-
-    js {
-        outputModuleName = "MoviesShared"
-        browser()
-        generateTypeScriptDefinitions()
-        binaries.library()
+    listOf(
+        js(),
+        wasmJs()
+    ).forEach{ target ->
+        target.outputModuleName = "MoviesShared"
+        target.browser()
+        target.generateTypeScriptDefinitions()
+        target.binaries.library()
     }
 
     applyDefaultHierarchyTemplate()

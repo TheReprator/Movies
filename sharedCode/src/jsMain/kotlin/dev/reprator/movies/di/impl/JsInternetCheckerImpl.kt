@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.reprator.movies.impl
+package dev.reprator.movies.di.impl
 
 import dev.reprator.movies.util.wrapper.NetworkListener
 import kotlinx.browser.window
@@ -29,7 +29,7 @@ private const val APP_EVENT_OFFLINE = "offline"
 private const val APP_EVENT_ONLINE = "online"
 
 @Inject
-class JsWasmInternetCheckerImpl : NetworkListener {
+class JsInternetCheckerImpl : NetworkListener {
     lateinit var callback: (event: Event) -> Unit
 
     private fun getCurrentNetworkState() =
