@@ -35,5 +35,5 @@ plugins {
 include(":sharedCode")
 include(":androidApp:app")
 include(":desktopApp")
-include(":webapp:js")
-include(":webapp:wasm")
+include(":webApp:js")
+include(":webApp:wasm")

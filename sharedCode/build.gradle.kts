@@ -63,12 +63,17 @@ kotlin {
     }
 
     wasmJs {
+        outputModuleName = "MoviesShared"
         browser()
+        generateTypeScriptDefinitions()
+        binaries.library()
     }
 
     js {
+        outputModuleName = "MoviesShared"
         browser()
-        binaries.executable()
+        generateTypeScriptDefinitions()
+        binaries.library()
     }
 
     sourceSets {
@@ -147,6 +152,7 @@ kotlin {
         }
 
         jsMain.dependencies {
+            implementation(npm("video.js", "8.10.0"))
             implementation(libs.ktor.client.js)
         }
     }

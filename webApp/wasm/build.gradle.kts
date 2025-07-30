@@ -33,6 +33,7 @@ kotlin {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
+                sourceMaps = true
                 outputFileName = "movies.js"
                 devServer =
                     (devServer ?: KotlinWebpackConfig.DevServer()).apply {
@@ -46,6 +47,7 @@ kotlin {
                     }
             }
         }
+        generateTypeScriptDefinitions()
         binaries.executable()
     }
 
