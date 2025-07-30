@@ -15,11 +15,14 @@
  */
 
 
-@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class)
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class,
+    ExperimentalKotlinGradlePluginApi::class
+)
 
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -75,6 +78,8 @@ kotlin {
         generateTypeScriptDefinitions()
         binaries.library()
     }
+
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
         val desktopMain by getting
@@ -147,13 +152,20 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
 
-        wasmJsMain.dependencies {
-            implementation(libs.ktor.client.js)
+        val webMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.ktor.client.js)
+                implementation(npm("video.js", "8.10.0"))
+            }
         }
 
-        jsMain.dependencies {
-            implementation(npm("video.js", "8.10.0"))
-            implementation(libs.ktor.client.js)
+        val wasmJsMain by getting {
+            dependsOn(webMain)
+        }
+
+        val jsMain by getting {
+            dependsOn(webMain)
         }
     }
 }

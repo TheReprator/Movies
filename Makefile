@@ -78,19 +78,13 @@ buildHotDesktop: clear
 # Run wasm build
 buildWasmWeb:
 	@echo "⏳Web Wasm build"
-	$(GRADLEW) webApp:wasm:wasmJsBrowserDevelopmentRun --continuous
+	$(GRADLEW) webApp:wasmJsBrowserDevelopmentRun --continuous
 	@echo "✅ Done!"
 
 # Run js build
 buildJsWeb: cleanBuild
 	@echo "⏳Web JS Hot build"
-	$(GRADLEW) webApp:js:jsBrowserDevelopmentRun --continuous
-	@echo "✅ Done!"
-
-# Run wasm UI test
-testUiJsWeb: cleanBuild
-	@echo "⏳Web Js UI test"
-	$(GRADLEW) webApp:wasmJs:wasmJsBrowserDevelopmentRun
+	$(GRADLEW) webApp:jsBrowserDevelopmentRun --continuous
 	@echo "✅ Done!"
 
 # Run Shared Unit test
@@ -121,11 +115,11 @@ testUiIos: cleanBuild
 # Run JS UI test
 testUiJsWeb: cleanBuild
 	@echo "⏳Web Js UI test"
-	$(GRADLEW) webApp:js:jsBrowserTest
+	$(GRADLEW) webApp:jsBrowserTest
 	@echo "✅ Done!"
 
 # Run wasm UI test
 testUiWasmWeb: cleanBuild
 	@echo "⏳Web wasm UI test"
-	$(GRADLEW) webApp:wasm:wasmJsBrowserTest
+	$(GRADLEW) webApp:wasmJsBrowserTest
 	@echo "✅ Done!"
