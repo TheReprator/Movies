@@ -118,7 +118,7 @@ fun RootNavigation(
     NavHost(
         navController = navController,
         startDestination = Route.Home,
-        modifier = modifier // The modifier passed from the scaffold
+        modifier = modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {

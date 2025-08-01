@@ -16,13 +16,16 @@
 
 package dev.reprator.movies.features.movies.presentation.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.reprator.movies.features.home.presentation.HomeViewModel
@@ -37,13 +40,9 @@ fun MoviesScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    Text("Movie Screen")
-
-    Column(modifier = Modifier.fillMaxWidth().height(400.dp).width(300.dp)) {
-
         VideoPlayer(
-            url =
-                "http://sample.vodobox.com/planete_interdite/planete_interdite_alternate.m3u8"
+                "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            modifier.background(Color.Red).fillMaxSize()
         )
     }
     /*
@@ -59,4 +58,3 @@ fun MoviesScreen(
         MediampPlayerSurface(player, Modifier.fillMaxSize())
     }
     * */
-}

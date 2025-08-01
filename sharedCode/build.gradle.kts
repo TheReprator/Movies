@@ -70,7 +70,13 @@ kotlin {
         wasmJs()
     ).forEach{ target ->
         target.outputModuleName = "MoviesShared"
-        target.browser()
+        target.browser{
+            commonWebpackConfig {
+                cssSupport {
+                    enabled.set(true)
+                }
+            }
+        }
         target.generateTypeScriptDefinitions()
         target.binaries.library()
     }
@@ -151,6 +157,7 @@ kotlin {
         val webMain by creating {
             dependsOn(commonMain.get())
             dependencies {
+                implementation(compose.runtime)
                 implementation(libs.ktor.client.js)
                 implementation(npm("video.js", "8.10.0"))
             }
@@ -162,6 +169,9 @@ kotlin {
 
         val jsMain by getting {
             dependsOn(webMain)
+            dependencies {
+                implementation(compose.html.core)
+            }
         }
     }
 }

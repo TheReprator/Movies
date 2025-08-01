@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-actual fun VideoPlayer(url: String) {
+actual fun VideoPlayer(url: String, modifier: Modifier) {
         VideoPlayerImpl(
             url = url,
-            modifier = Modifier.fillMaxSize())
+            modifier = modifier.fillMaxSize())
 }

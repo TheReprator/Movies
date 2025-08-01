@@ -39,8 +39,11 @@ kotlin {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
+                cssSupport {
+                    enabled.set(true)
+                }
                 sourceMaps = true
-                outputFileName = "movies.js" // This is the same for both
+                outputFileName = "movies.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                     static = (static ?: mutableListOf()).apply {
                         add(rootDirPath)
@@ -55,6 +58,7 @@ kotlin {
     sourceSets {
         val webMain by creating {
             dependencies {
+                implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(projects.sharedCode)
             }
@@ -62,6 +66,9 @@ kotlin {
 
         val jsMain by getting {
             dependsOn(webMain)
+            dependencies {
+                implementation(compose.html.core)
+            }
         }
 
         val wasmJsMain by getting {

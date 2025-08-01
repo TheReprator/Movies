@@ -8,6 +8,7 @@ clear:
 # clear build
 cleanBuild: clear
 	@echo "⏳ Clean build"
+	rm -rf kotlin-js-store
 	$(GRADLEW) clean
 	@echo "✅ Done!"
 
