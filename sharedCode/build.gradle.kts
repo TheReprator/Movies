@@ -15,12 +15,12 @@
  */
 
 
-@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class,
+@file:OptIn(
+    ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class,
     ExperimentalKotlinGradlePluginApi::class
 )
 
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -68,9 +68,9 @@ kotlin {
     listOf(
         js(),
         wasmJs()
-    ).forEach{ target ->
+    ).forEach { target ->
         target.outputModuleName = "MoviesShared"
-        target.browser{
+        target.browser {
             commonWebpackConfig {
                 cssSupport {
                     enabled.set(true)
@@ -80,8 +80,6 @@ kotlin {
         target.generateTypeScriptDefinitions()
         target.binaries.library()
     }
-
-    applyDefaultHierarchyTemplate()
 
     sourceSets {
         val desktopMain by getting
@@ -154,24 +152,15 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
 
-        val webMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-                implementation(compose.runtime)
-                implementation(libs.ktor.client.js)
-                implementation(npm("video.js", "8.10.0"))
-            }
+        webMain.dependencies {
+            implementation(compose.runtime)
+            implementation(libs.ktor.client.js)
+            implementation(libs.web.filesystem)
+            implementation(npm("video.js", "8.10.0"))
         }
 
-        val wasmJsMain by getting {
-            dependsOn(webMain)
-        }
-
-        val jsMain by getting {
-            dependsOn(webMain)
-            dependencies {
-                implementation(compose.html.core)
-            }
+        jsMain.dependencies {
+            implementation(compose.html.core)
         }
     }
 }
@@ -206,9 +195,11 @@ mokkery {
     ignoreFinalMembers.set(true)
 }
 
-fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
+fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) =
+    addKspDependencyForAllTargets("", dependencyNotation)
 
-fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("Test", dependencyNotation)
+fun Project.addKspTestDependencyForAllTargets(dependencyNotation: Any) =
+    addKspDependencyForAllTargets("Test", dependencyNotation)
 
 private fun Project.addKspDependencyForAllTargets(
     configurationNameSuffix: String,

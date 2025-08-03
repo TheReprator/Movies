@@ -49,6 +49,7 @@ kotlin {
                         add(rootDirPath)
                         add(projectDirPath)
                     }
+                    sourceMaps = true
                     port = 8081
                 }
             }
@@ -56,23 +57,10 @@ kotlin {
     }
 
     sourceSets {
-        val webMain by creating {
-            dependencies {
+            webMain.dependencies {
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(projects.sharedCode)
             }
-        }
-
-        val jsMain by getting {
-            dependsOn(webMain)
-            dependencies {
-                implementation(compose.html.core)
-            }
-        }
-
-        val wasmJsMain by getting {
-            dependsOn(webMain)
-        }
     }
 }

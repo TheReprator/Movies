@@ -1,31 +1,35 @@
-// Replace paths unavailable during compilation with `null`, so they will not be shown in devtools
-;
-(() => {
-    const fs = require("fs");
-    const path = require("path");
-
-    const outDir = __dirname + "/kotlin/"
-    const projecName = path.basename(__dirname);
-    const mapFile = outDir + projecName + ".map"
-
-    const sourcemap = JSON.parse(fs.readFileSync(mapFile))
-    const sources = sourcemap["sources"]
-    srcLoop: for (let i in sources) {
-        const srcFilePath = sources[i];
-        if (srcFilePath == null) continue;
-
-        const srcFileCandidates = [
-            outDir + srcFilePath,
-            outDir + srcFilePath.substring("../".length),
-            outDir + "../" + srcFilePath,
-        ];
-
-        for (let srcFile of srcFileCandidates) {
-            if (fs.existsSync(srcFile)) continue srcLoop;
-        }
-
-        sources[i] = null;
+config.resolve = {
+    fallback: {
+        fs: false,
+        path: false,
+        crypto: false,
     }
+};
 
-    fs.writeFileSync(mapFile, JSON.stringify(sourcemap));
-})();
+config.devServer = Object.assign(
+    {},
+    config.devServer || {},
+    {
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp"
+        }
+    }
+);
+
+// https://github.com/sqldelight/sqldelight/issues/2057#issuecomment-1087799619
+const webpack = require("webpack");
+
+module.exports = function override(config) {
+    const fallback = config.resolve.fallback || {};
+    Object.assign(fallback, {
+        path: require.resolve("path-browserify"),
+        fs: require.resolve("browserify-fs"),
+        "util": require.resolve("util/"),
+        "buffer": require.resolve("buffer/"),
+        "stream": require.resolve("stream-browserify"),
+        "crypto": require.resolve("crypto-browserify")
+    });
+    config.resolve.fallback = fallback;
+  return config;
+};
